@@ -130,13 +130,6 @@ export class AnnouncementComponent implements OnInit {
     this.router.navigate(['/admin/dashboard']);
   }
 
-  public viewFile(attachment: FileAttachment): void {
-    const user = this.currentUser();
-    if (user) {
-      this.fileService.viewFile(attachment.id, user.id, user.name, user.email);
-    }
-  }
-
   public downloadFile(attachment: FileAttachment): void {
     const user = this.currentUser();
     if (user) {

@@ -40,13 +40,7 @@
 }
 
 .image-preview img {
-  cursor: pointer;
-  transition: transform 0.2s ease;
   border-radius: 6px;
-}
-
-.image-preview img:hover {
-  transform: scale(1.05);
 }
 
 .file-icon {
