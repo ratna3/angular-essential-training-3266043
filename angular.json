@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "announcement-portal": {
+    "gem-finder": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/announcement-portal",
+            "outputPath": "dist/gem-finder",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -66,10 +66,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "announcement-portal:build:production"
+              "browserTarget": "gem-finder:build:production"
             },
             "development": {
-              "browserTarget": "announcement-portal:build:development"
+              "browserTarget": "gem-finder:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -77,7 +77,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "announcement-portal:build"
+            "browserTarget": "gem-finder:build"
           }
         },
         "test": {

@@ -1,63 +1,22 @@
 :root {
-  /* Modern color scheme for announcement portal */
-  --bs-body-bg: #ffffff;
-  --bs-body-color: #212529;
+  /* https://getbootstrap.com/docs/5.3/customize/css-variables/ */
+  --bs-body-bg: #53777A;
+  --bs-body-color: #ECD078;
   --bs-body-font-family: 'Oswald', sans-serif;
-  --bs-body-font-size: 1rem;
-  --bs-link-color: #0d6efd;
+  --bs-body-font-size: 1.4rem;
+  --bs-link-color: var(--bs-body-color);
 }
 
-/* Global styles */
-body {
-  font-family: 'Oswald', sans-serif;
-  background-color: #f8f9fa;
+.nav-pills {
+  --bs-nav-pills-link-active-color: var(--bs-body-bg);
+  --bs-nav-pills-link-active-bg: var(--bs-body-color);
 }
 
-.min-vh-100 {
-  min-height: 100vh;
+.list-group {
+  --bs-list-group-bg: transparent;
 }
 
-/* Custom button styles */
-.btn {
-  border-radius: 8px;
-  font-weight: 500;
-  transition: all 0.2s ease;
-}
-
-.btn:hover {
-  transform: translateY(-1px);
-}
-
-/* Card improvements */
-.card {
-  border: none;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  transition: all 0.2s ease;
-}
-
-.card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-}
-
-/* Form improvements */
-.form-control {
-  border-radius: 8px;
-  border: 2px solid #e9ecef;
-  transition: all 0.2s ease;
-}
-
-.form-control:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
-}
-
-/* Animation utilities */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.fade-in {
-  animation: fadeIn 0.3s ease-out;
+.list-group-item {
+  --bs-list-group-border-color: var(--bs-body-color);
+  --bs-list-group-color: var(--bs-body-color);
 }

@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { environment } from 'src/environments/environment';
+import { MessageService } from './services/message.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  public title = 'Announcement Portal';
+  public appFooter = environment.appFooter;
+
+  constructor(
+    public messageService: MessageService
+  ) { }
 }

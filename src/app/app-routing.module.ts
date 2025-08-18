@@ -1,37 +1,43 @@
 import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import { ActivatedRouteSnapshot, RouterModule, Routes } from '@angular/router';
+import { PreloadingService } from './services/preloading.service';
 
 const routes: Routes = [
   {
+    path: 'profile/:id',
+    loadComponent: () => import('./pages/profile/profile.component').then(m => m.ProfileComponent),
+    title: (route: ActivatedRouteSnapshot) => `Gem Finder | Profile for ${route.paramMap.get('id')}`
+  },
+  {
+    path: 'players',
+    loadChildren: () => import('./pages/players/players.module').then(m => m.PlayersModule),
+    title: 'Gem Finder | All Players',
+    data: { preload: true }
+  },
+  {
+    path: 'leaderboards',
+    loadChildren: () => import('./pages/leaderboards/leaderboards.module').then(m => m.LeaderboardsModule),
+    title: 'Gem Finder | Leaderboards'
+  },
+  {
+    path: 'messages',
+    loadComponent: () => import('./pages/messages/messages.component').then(m => m.MessagesComponent),
+    data: { preload: true }
+  },
+  {
     path: '',
-    loadComponent: () => import('./pages/landing/landing.component').then(m => m.LandingComponent),
-    title: 'Announcement Portal | Welcome'
-  },
-  {
-    path: 'announcement',
-    loadComponent: () => import('./pages/announcement/announcement.component').then(m => m.AnnouncementComponent),
-    title: 'Announcement Portal | Latest News'
-  },
-  {
-    path: 'admin',
-    loadComponent: () => import('./pages/admin-login/admin-login.component').then(m => m.AdminLoginComponent),
-    title: 'Announcement Portal | Admin Login'
-  },
-  {
-    path: 'admin/dashboard',
-    loadComponent: () => import('./pages/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
-    title: 'Announcement Portal | Admin Dashboard'
+    redirectTo: `/players`,
+    pathMatch: 'full',
   },
   {
     path: '**',
-    redirectTo: '',
-    pathMatch: 'full'
+    redirectTo: '/players'
   }
 ];
 
 @NgModule({
   imports: [
-    RouterModule.forRoot(routes)
+    RouterModule.forRoot(routes, { preloadingStrategy: PreloadingService })
   ],
   exports: [RouterModule]
 })
