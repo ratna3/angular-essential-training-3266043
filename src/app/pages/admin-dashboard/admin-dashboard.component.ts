@@ -22,6 +22,7 @@ export class AdminDashboardComponent implements OnInit {
   public successMessage = signal('');
   public currentAnnouncement = signal<Announcement | null>(null);
   public showDeleteConfirm = signal(false);
+  public editingAnnouncementId = signal<string | null>(null);
 
   public viewedUsers = this.userService.viewedUsers;
 
@@ -45,11 +46,8 @@ export class AdminDashboardComponent implements OnInit {
     const announcement = this.announcementService.getLatestAnnouncement();
     this.currentAnnouncement.set(announcement);
     
-    if (announcement) {
-      this.title.set(announcement.title);
-      this.content.set(announcement.content);
-    } else {
-      // Reset form if no announcement exists
+    // Don't pre-fill the form when not editing - let admin create new announcements
+    if (!this.editingAnnouncementId()) {
       this.title.set('');
       this.content.set('');
     }
@@ -64,13 +62,34 @@ export class AdminDashboardComponent implements OnInit {
     this.successMessage.set('');
 
     try {
-      const updatedAnnouncement = this.announcementService.createOrUpdateAnnouncement(
-        this.title().trim(),
-        this.content().trim()
-      );
+      const editingId = this.editingAnnouncementId();
       
-      this.currentAnnouncement.set(updatedAnnouncement);
-      this.successMessage.set('Announcement updated successfully!');
+      if (editingId) {
+        // Update existing announcement
+        const updated = this.announcementService.updateAnnouncement(
+          editingId,
+          this.title().trim(),
+          this.content().trim()
+        );
+        
+        if (updated) {
+          this.successMessage.set('Announcement updated successfully!');
+          this.cancelEdit();
+        }
+      } else {
+        // Create new announcement
+        this.announcementService.createNewAnnouncement(
+          this.title().trim(),
+          this.content().trim()
+        );
+        this.successMessage.set('New announcement created successfully!');
+        
+        // Clear form after creating
+        this.title.set('');
+        this.content.set('');
+      }
+      
+      this.currentAnnouncement.set(this.announcementService.getLatestAnnouncement());
       
       // Clear success message after 3 seconds
       setTimeout(() => {
@@ -78,7 +97,7 @@ export class AdminDashboardComponent implements OnInit {
       }, 3000);
       
     } catch (error) {
-      console.error('Error updating announcement:', error);
+      console.error('Error with announcement:', error);
     } finally {
       this.isSubmitting.set(false);
     }
@@ -155,5 +174,28 @@ export class AdminDashboardComponent implements OnInit {
 
   public hasAnnouncement(): boolean {
     return this.currentAnnouncement() !== null;
+  }
+
+  public getTotalAnnouncements(): number {
+    return this.announcementService.getAllAnnouncements().length;
+  }
+
+  public isEditMode(): boolean {
+    return this.editingAnnouncementId() !== null;
+  }
+
+  public editCurrentAnnouncement(): void {
+    const current = this.currentAnnouncement();
+    if (current) {
+      this.editingAnnouncementId.set(current.id);
+      this.title.set(current.title);
+      this.content.set(current.content);
+    }
+  }
+
+  public cancelEdit(): void {
+    this.editingAnnouncementId.set(null);
+    this.title.set('');
+    this.content.set('');
   }
 }

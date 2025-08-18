@@ -5,6 +5,7 @@ import { User } from '../../interfaces/user';
 import { Announcement } from '../../interfaces/announcement';
 import { AnnouncementService } from '../../services/announcement.service';
 import { UserService } from '../../services/user.service';
+import { AdminService } from '../../services/admin.service';
 
 @Component({
   selector: 'app-announcement',
@@ -18,6 +19,8 @@ export class AnnouncementComponent implements OnInit {
   public announcement = signal<Announcement | null>(null);
   public selectedUser = signal<User | null>(null);
   public showUserDetails = signal(false);
+  public showDeleteConfirm = signal(false);
+  public isDeleting = signal(false);
 
   public hasLiked = computed(() => {
     const user = this.currentUser();
@@ -25,11 +28,16 @@ export class AnnouncementComponent implements OnInit {
     return user && ann ? this.announcementService.hasUserLiked(ann.id, user.id) : false;
   });
 
+  public isAdmin = computed(() => {
+    return this.adminService.isAuthenticated();
+  });
+
   public viewedUsers = this.userService.viewedUsers;
 
   constructor(
     private userService: UserService,
     private announcementService: AnnouncementService,
+    private adminService: AdminService,
     private router: Router
   ) {}
 
@@ -88,5 +96,34 @@ export class AnnouncementComponent implements OnInit {
 
   public hasAnnouncement(): boolean {
     return this.announcement() !== null;
+  }
+
+  public confirmDelete(): void {
+    this.showDeleteConfirm.set(true);
+  }
+
+  public cancelDelete(): void {
+    this.showDeleteConfirm.set(false);
+  }
+
+  public deleteAnnouncement(): void {
+    const ann = this.announcement();
+    if (!ann) return;
+
+    this.isDeleting.set(true);
+    
+    const success = this.announcementService.deleteAnnouncement(ann.id);
+    
+    if (success) {
+      // Refresh to show updated announcement or no announcement
+      this.announcement.set(this.announcementService.getLatestAnnouncement());
+      this.showDeleteConfirm.set(false);
+    }
+    
+    this.isDeleting.set(false);
+  }
+
+  public goToAdminDashboard(): void {
+    this.router.navigate(['/admin/dashboard']);
   }
 }

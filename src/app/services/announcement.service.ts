@@ -83,6 +83,48 @@ export class AnnouncementService {
     return latestAnnouncement as Announcement;
   }
 
+  public createNewAnnouncement(title: string, content: string): Announcement {
+    const now = new Date();
+    
+    // Always create a new announcement
+    const newAnnouncement: Announcement = {
+      id: Date.now().toString(),
+      title: title.trim(),
+      content: content.trim(),
+      createdAt: now,
+      updatedAt: now,
+      likes: 0,
+      likedBy: []
+    };
+    
+    this.announcements.update(announcements => [...announcements, newAnnouncement]);
+    this.saveAnnouncements();
+    return newAnnouncement;
+  }
+
+  public updateAnnouncement(id: string, title: string, content: string): Announcement | null {
+    const now = new Date();
+    let updatedAnnouncement: Announcement | null = null;
+    
+    this.announcements.update(announcements => 
+      announcements.map(a => {
+        if (a.id === id) {
+          updatedAnnouncement = {
+            ...a,
+            title: title.trim(),
+            content: content.trim(),
+            updatedAt: now
+          };
+          return updatedAnnouncement;
+        }
+        return a;
+      })
+    );
+    
+    this.saveAnnouncements();
+    return updatedAnnouncement;
+  }
+
   public deleteAnnouncement(announcementId: string): boolean {
     const initialCount = this.announcements().length;
     
