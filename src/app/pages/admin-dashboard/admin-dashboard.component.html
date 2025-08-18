@@ -321,6 +321,147 @@
         </div>
       </div>
     </div>
+
+    <!-- Hierarchical Admin Section -->
+    <div *ngIf="hasSubordinates()" class="row mt-4">
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-header bg-gradient bg-info text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">
+              <i class="bi bi-diagram-3 me-2"></i>
+              Department Hierarchy & Subordinate Announcements
+            </h5>
+            <button 
+              class="btn btn-outline-light btn-sm"
+              (click)="toggleHierarchy()"
+            >
+              <i class="bi" [class.bi-chevron-down]="!showHierarchy()" [class.bi-chevron-up]="showHierarchy()"></i>
+              {{ showHierarchy() ? 'Hide' : 'Show' }} Hierarchy
+            </button>
+          </div>
+          
+          <div *ngIf="showHierarchy()" class="card-body p-0">
+            <div class="row g-0">
+              <!-- Hierarchy Tree -->
+              <div class="col-lg-5 border-end">
+                <div class="p-3">
+                  <h6 class="text-primary mb-3">
+                    <i class="bi bi-people me-1"></i>
+                    Officer Hierarchy
+                  </h6>
+                  <app-role-hierarchy 
+                    [currentUser]="currentAdmin()!" 
+                    (selectOfficer)="onSelectOfficer($event)">
+                  </app-role-hierarchy>
+                </div>
+              </div>
+              
+              <!-- Selected Officer's Announcements -->
+              <div class="col-lg-7">
+                <div class="p-3">
+                  <div *ngIf="selectedOfficer(); else noOfficerSelected">
+                    <div class="d-flex align-items-center mb-3">
+                      <div class="me-3">
+                        <i class="display-6 text-info bi-person-badge"></i>
+                      </div>
+                      <div>
+                        <h6 class="mb-1">{{ selectedOfficer()!.fullName }}</h6>
+                        <p class="text-muted mb-1 small">{{ selectedOfficer()!.role.displayName }}</p>
+                        <span class="badge bg-info">{{ selectedOfficer()!.department }}</span>
+                      </div>
+                    </div>
+                    
+                    <h6 class="text-success mb-3">
+                      <i class="bi bi-megaphone me-1"></i>
+                      Announcements ({{ selectedOfficerAnnouncements().length }})
+                    </h6>
+                    
+                    <div *ngIf="selectedOfficerAnnouncements().length > 0; else noAnnouncements" class="announcements-list">
+                      <div *ngFor="let announcement of selectedOfficerAnnouncements()" 
+                           class="card mb-3 border-start border-info border-3">
+                        <div class="card-body">
+                          <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="card-title mb-1">{{ announcement.title }}</h6>
+                            <span class="badge" [class]="getAnnouncementPriorityBadge(announcement.priority)">
+                              {{ announcement.priority || 'medium' }}
+                            </span>
+                          </div>
+                          
+                          <p class="card-text small text-muted mb-2">{{ announcement.content }}</p>
+                          
+                          <div class="d-flex justify-content-between align-items-center">
+                            <div class="small text-muted">
+                              <i class="bi bi-calendar3 me-1"></i>
+                              {{ formatDate(announcement.createdAt) }}
+                              <span *ngIf="announcement.attachments && announcement.attachments.length > 0" class="ms-2">
+                                <i class="bi bi-paperclip text-info"></i>
+                                {{ announcement.attachments.length }} file{{ announcement.attachments.length !== 1 ? 's' : '' }}
+                              </span>
+                            </div>
+                            
+                            <div class="btn-group btn-group-sm">
+                              <button 
+                                *ngIf="canEditSelectedAnnouncement(announcement)"
+                                class="btn btn-outline-primary btn-sm"
+                                (click)="editAnnouncement(announcement.id)"
+                                title="Edit Announcement"
+                              >
+                                <i class="bi bi-pencil"></i>
+                              </button>
+                              <button 
+                                *ngIf="canDeleteSelectedAnnouncement(announcement)"
+                                class="btn btn-outline-danger btn-sm"
+                                (click)="deleteSpecificAnnouncement(announcement.id)"
+                                title="Delete Announcement"
+                              >
+                                <i class="bi bi-trash3"></i>
+                              </button>
+                            </div>
+                          </div>
+                          
+                          <!-- File Attachments -->
+                          <div *ngIf="announcement.attachments && announcement.attachments.length > 0" class="mt-2">
+                            <div class="row g-2">
+                              <div *ngFor="let file of announcement.attachments" class="col-md-6">
+                                <div class="card card-body p-2 bg-light">
+                                  <div class="d-flex align-items-center">
+                                    <i class="me-2" [class]="getFileIcon(file.type)"></i>
+                                    <div class="flex-grow-1 text-truncate">
+                                      <small class="fw-semibold">{{ file.originalName }}</small>
+                                      <small class="d-block text-muted">{{ formatFileSize(file.size) }}</small>
+                                    </div>
+                                    <small class="text-warning">{{ file.downloads }} downloads</small>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <ng-template #noAnnouncements>
+                      <div class="text-center py-4">
+                        <i class="bi bi-inbox display-1 text-muted"></i>
+                        <p class="text-muted mt-2">No announcements from this officer</p>
+                      </div>
+                    </ng-template>
+                  </div>
+                  
+                  <ng-template #noOfficerSelected>
+                    <div class="text-center py-5">
+                      <i class="bi bi-person-plus display-1 text-muted"></i>
+                      <p class="text-muted mt-3">Select an officer from the hierarchy to view their announcements</p>
+                      <p class="small text-muted">You can view announcements from officers with lower seniority levels</p>
+                    </div>
+                  </ng-template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 

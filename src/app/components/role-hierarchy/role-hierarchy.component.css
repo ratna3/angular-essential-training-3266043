@@ -1,0 +1,153 @@
+.role-hierarchy-container {
+  max-height: 600px;
+}
+
+.department-header {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+.department-header:hover {
+  background-color: var(--bs-gray-200) !important;
+}
+
+.department-header.collapsed {
+  opacity: 0.8;
+}
+
+.officers-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.officer-item {
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.officer-item:hover {
+  background-color: var(--bs-gray-100);
+  transform: translateX(5px);
+}
+
+.officer-item.current-user {
+  background-color: rgba(var(--bs-success-rgb), 0.1);
+  border-left: 4px solid var(--bs-success);
+}
+
+.officer-item.direct-subordinate {
+  background-color: rgba(var(--bs-primary-rgb), 0.05);
+  border-left: 3px solid var(--bs-primary);
+}
+
+.officer-item.subordinate:not(.direct-subordinate) {
+  background-color: rgba(var(--bs-info-rgb), 0.03);
+  border-left: 2px solid var(--bs-info);
+}
+
+.officer-item.disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: rgba(var(--bs-gray-rgb), 0.05);
+}
+
+.officer-item.disabled:hover {
+  transform: none;
+  background-color: rgba(var(--bs-gray-rgb), 0.05);
+}
+
+.current-user-info {
+  border-left: 4px solid var(--bs-success);
+}
+
+.seniority-badge {
+  font-size: 0.75rem;
+}
+
+.status-indicators .badge {
+  font-size: 0.65rem;
+}
+
+.hierarchy-tree {
+  max-height: 450px;
+  overflow-y: auto;
+}
+
+.stat-item h6 {
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.quick-stats {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+/* Custom scrollbar */
+.officers-list::-webkit-scrollbar,
+.hierarchy-tree::-webkit-scrollbar {
+  width: 6px;
+}
+
+.officers-list::-webkit-scrollbar-track,
+.hierarchy-tree::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 6px;
+}
+
+.officers-list::-webkit-scrollbar-thumb,
+.hierarchy-tree::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 6px;
+}
+
+.officers-list::-webkit-scrollbar-thumb:hover,
+.hierarchy-tree::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .role-hierarchy-container {
+    max-height: 500px;
+  }
+  
+  .officer-item .d-flex {
+    flex-direction: column;
+    align-items: flex-start !important;
+  }
+  
+  .officer-item .text-end {
+    text-align: left !important;
+    margin-top: 0.5rem;
+  }
+  
+  .status-indicators {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+}
+
+/* Animation for expand/collapse */
+.officers-list {
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    max-height: 0;
+  }
+  to {
+    opacity: 1;
+    max-height: 400px;
+  }
+}
+
+/* Priority colors */
+.text-priority-1 { color: #dc3545 !important; } /* Danger - Highest priority */
+.text-priority-2 { color: #fd7e14 !important; } /* Warning - High priority */
+.text-priority-3 { color: #ffc107 !important; } /* Warning - Medium priority */
+.text-priority-4 { color: #20c997 !important; } /* Teal - Low priority */

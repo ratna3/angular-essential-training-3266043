@@ -4,15 +4,18 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Announcement } from '../../interfaces/announcement';
 import { FileAttachment } from '../../interfaces/file-attachment';
+import { Admin } from '../../interfaces/admin';
 import { AdminService } from '../../services/admin.service';
 import { AnnouncementService } from '../../services/announcement.service';
 import { UserService } from '../../services/user.service';
 import { FileService } from '../../services/file.service';
+import { HierarchicalAdminService } from '../../services/hierarchical-admin.service';
+import { RoleHierarchyComponent } from '../../components/role-hierarchy/role-hierarchy.component';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RoleHierarchyComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.css']
 })
@@ -28,6 +31,12 @@ export class AdminDashboardComponent implements OnInit {
   public selectedFiles = signal<File[]>([]);
   public uploadedAttachments = signal<FileAttachment[]>([]);
   public isUploadingFiles = signal(false);
+  
+  // Hierarchical admin properties
+  public currentAdmin = signal<Admin | null>(null);
+  public selectedOfficer = signal<Admin | null>(null);
+  public selectedOfficerAnnouncements = signal<Announcement[]>([]);
+  public showHierarchy = signal(false);
 
   public viewedUsers = this.userService.viewedUsers;
 
@@ -36,6 +45,7 @@ export class AdminDashboardComponent implements OnInit {
     private announcementService: AnnouncementService,
     private userService: UserService,
     private fileService: FileService,
+    private hierarchicalAdminService: HierarchicalAdminService,
     private router: Router
   ) {}
 
@@ -44,6 +54,10 @@ export class AdminDashboardComponent implements OnInit {
       this.router.navigate(['/admin']);
       return;
     }
+
+    // Load current admin information
+    const admin = this.adminService.getCurrentAdmin();
+    this.currentAdmin.set(admin);
 
     this.loadCurrentAnnouncement();
     
@@ -302,5 +316,105 @@ export class AdminDashboardComponent implements OnInit {
     const selectedSize = this.selectedFiles().reduce((total, file) => total + file.size, 0);
     const uploadedSize = this.uploadedAttachments().reduce((total, att) => total + att.size, 0);
     return selectedSize + uploadedSize;
+  }
+
+  // Hierarchical admin methods
+  public toggleHierarchy(): void {
+    this.showHierarchy.update(show => !show);
+  }
+
+  public onSelectOfficer(officer: Admin): void {
+    this.selectedOfficer.set(officer);
+    const announcements = this.announcementService.getAnnouncementsByOfficer(officer.id);
+    this.selectedOfficerAnnouncements.set(announcements);
+  }
+
+  public getSubordinateAnnouncements(): Announcement[] {
+    return this.announcementService.getSubordinateAnnouncements();
+  }
+
+  public canEditSelectedAnnouncement(announcement: Announcement): boolean {
+    const currentAdmin = this.currentAdmin();
+    if (!currentAdmin) return false;
+    return this.announcementService.canEditAnnouncement(announcement, currentAdmin);
+  }
+
+  public canDeleteSelectedAnnouncement(announcement: Announcement): boolean {
+    const currentAdmin = this.currentAdmin();
+    if (!currentAdmin) return false;
+    return this.announcementService.canDeleteAnnouncement(announcement, currentAdmin);
+  }
+
+  public getAnnouncementCreatorInfo(announcement: Announcement): string {
+    const creator = announcement.createdBy;
+    return `${creator.fullName} (${creator.role.displayName}) - ${creator.department}`;
+  }
+
+  public getAnnouncementPriorityBadge(priority?: string): string {
+    const badges: { [key: string]: string } = {
+      'urgent': 'bg-danger',
+      'high': 'bg-warning text-dark',
+      'medium': 'bg-info',
+      'low': 'bg-secondary'
+    };
+    return badges[priority || 'medium'] || 'bg-secondary';
+  }
+
+  public getRoleHierarchyLevel(): number {
+    const currentAdmin = this.currentAdmin();
+    return currentAdmin?.role.seniorityLevel || 10;
+  }
+
+  public hasSubordinates(): boolean {
+    const currentAdmin = this.currentAdmin();
+    if (!currentAdmin) return false;
+    const subordinates = this.hierarchicalAdminService.getSubordinateAdmins(currentAdmin);
+    return subordinates.length > 0;
+  }
+
+  public editAnnouncement(announcementId: string): void {
+    const announcement = this.announcementService.getAllAnnouncements().find(a => a.id === announcementId);
+    if (announcement) {
+      const currentAdmin = this.currentAdmin();
+      if (currentAdmin && this.announcementService.canEditAnnouncement(announcement, currentAdmin)) {
+        this.editingAnnouncementId.set(announcementId);
+        this.title.set(announcement.title);
+        this.content.set(announcement.content);
+        this.uploadedAttachments.set(announcement.attachments || []);
+        this.selectedFiles.set([]);
+        
+        // Scroll to the form
+        const formElement = document.querySelector('.card');
+        if (formElement) {
+          formElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        alert('You do not have permission to edit this announcement.');
+      }
+    }
+  }
+
+  public deleteSpecificAnnouncement(announcementId: string): void {
+    const announcement = this.announcementService.getAllAnnouncements().find(a => a.id === announcementId);
+    if (announcement) {
+      const currentAdmin = this.currentAdmin();
+      if (currentAdmin && this.announcementService.canDeleteAnnouncement(announcement, currentAdmin)) {
+        if (confirm(`Are you sure you want to delete "${announcement.title}"?`)) {
+          const success = this.announcementService.deleteAnnouncement(announcementId);
+          if (success) {
+            this.successMessage.set('Announcement deleted successfully!');
+            // Refresh the selected officer's announcements
+            const selectedOfficer = this.selectedOfficer();
+            if (selectedOfficer) {
+              this.onSelectOfficer(selectedOfficer);
+            }
+            // Clear the success message after 3 seconds
+            setTimeout(() => this.successMessage.set(''), 3000);
+          }
+        }
+      } else {
+        alert('You do not have permission to delete this announcement.');
+      }
+    }
   }
 }

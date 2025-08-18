@@ -1,0 +1,133 @@
+<div class="role-hierarchy-container">
+  <div class="card border-0 shadow-sm">
+    <div class="card-header bg-gradient bg-primary text-white">
+      <h6 class="mb-0">
+        <i class="bi bi-diagram-3 me-2"></i>
+        Department Hierarchy
+      </h6>
+      <small class="opacity-75">View announcements from subordinate officers</small>
+    </div>
+    
+    <div class="card-body p-0">
+      <!-- Current User Info -->
+      <div class="current-user-info p-3 bg-light border-bottom">
+        <div class="d-flex align-items-center">
+          <div class="me-3">
+            <i class="display-6" [class]="getRoleIcon(currentUser.role.name) + ' ' + getRolePriorityColor(currentUser.role.seniorityLevel)"></i>
+          </div>
+          <div>
+            <h6 class="mb-1 fw-bold">{{ currentUser.fullName }}</h6>
+            <p class="text-muted mb-1 small">{{ currentUser.role.displayName }}</p>
+            <span class="badge bg-success small">{{ currentUser.department }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hierarchy Tree -->
+      <div class="hierarchy-tree">
+        <div *ngFor="let dept of hierarchyTree() | keyvalue" class="department-section">
+          <div class="department-header p-3 border-bottom bg-light" 
+               [class.collapsed]="!isDepartmentExpanded(dept.key)"
+               (click)="toggleDepartment(dept.key)">
+            <div class="d-flex align-items-center justify-content-between">
+              <div class="d-flex align-items-center">
+                <i class="me-2" [class]="getDepartmentIcon(dept.key)"></i>
+                <span class="fw-semibold">{{ dept.key }}</span>
+                <span class="badge bg-secondary ms-2 small">{{ dept.value.length }}</span>
+              </div>
+              <i class="bi" 
+                 [class.bi-chevron-down]="!isDepartmentExpanded(dept.key)"
+                 [class.bi-chevron-up]="isDepartmentExpanded(dept.key)"></i>
+            </div>
+          </div>
+
+          <div *ngIf="isDepartmentExpanded(dept.key)" class="officers-list">
+            <div *ngFor="let admin of dept.value; trackBy: trackByAdminId" 
+                 class="officer-item p-3 border-bottom"
+                 [class.subordinate]="isSubordinate(admin)"
+                 [class.direct-subordinate]="isDirectSubordinate(admin)"
+                 [class.current-user]="admin.id === currentUser.id"
+                 [class.disabled]="!isSubordinate(admin) && admin.id !== currentUser.id"
+                 (click)="onSelectOfficer(admin)">
+              
+              <div class="d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                  <div class="me-3">
+                    <i class="fs-4" [class]="getRoleIcon(admin.role.name) + ' ' + getRolePriorityColor(admin.role.seniorityLevel)"></i>
+                  </div>
+                  <div>
+                    <h6 class="mb-1" [class]="getRolePriorityColor(admin.role.seniorityLevel)">
+                      {{ admin.fullName }}
+                      <i *ngIf="admin.id === currentUser.id" class="bi bi-person-check text-success ms-1" title="You"></i>
+                    </h6>
+                    <p class="text-muted mb-1 small">{{ admin.role.displayName }}</p>
+                    <p class="text-muted mb-0 small">{{ admin.employeeId }}</p>
+                  </div>
+                </div>
+                
+                <div class="text-end">
+                  <div class="seniority-badge">
+                    <span class="badge" 
+                          [class.bg-danger]="admin.role.seniorityLevel <= 2"
+                          [class.bg-warning]="admin.role.seniorityLevel > 2 && admin.role.seniorityLevel <= 4"
+                          [class.bg-info]="admin.role.seniorityLevel > 4 && admin.role.seniorityLevel <= 6"
+                          [class.bg-secondary]="admin.role.seniorityLevel > 6">
+                      Level {{ admin.role.seniorityLevel }}
+                    </span>
+                  </div>
+                  
+                  <div class="status-indicators mt-1">
+                    <span *ngIf="isDirectSubordinate(admin)" class="badge bg-success small me-1" title="Direct Subordinate">
+                      <i class="bi bi-arrow-down-circle"></i>
+                    </span>
+                    <span *ngIf="isSubordinate(admin) && !isDirectSubordinate(admin)" class="badge bg-info small me-1" title="Subordinate">
+                      <i class="bi bi-arrow-down"></i>
+                    </span>
+                    <span *ngIf="admin.role.seniorityLevel < currentUser.role.seniorityLevel" class="badge bg-warning small me-1" title="Superior">
+                      <i class="bi bi-arrow-up"></i>
+                    </span>
+                    <span *ngIf="admin.lastLogin" class="badge bg-light text-dark small" title="Last Login">
+                      <i class="bi bi-clock"></i> {{ getRelativeTime(admin.lastLogin) }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Action Button -->
+              <div *ngIf="isSubordinate(admin)" class="mt-2 text-end">
+                <button class="btn btn-outline-primary btn-sm" (click)="onSelectOfficer(admin); $event.stopPropagation()">
+                  <i class="bi bi-eye me-1"></i>
+                  View Announcements
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Stats -->
+      <div class="quick-stats p-3 bg-light border-top">
+        <div class="row text-center">
+          <div class="col-4">
+            <div class="stat-item">
+              <h6 class="text-primary mb-0">{{ subordinateAdmins().length }}</h6>
+              <small class="text-muted">Subordinates</small>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="stat-item">
+              <h6 class="text-success mb-0">{{ getDepartmentCount() }}</h6>
+              <small class="text-muted">Departments</small>
+            </div>
+          </div>
+          <div class="col-4">
+            <div class="stat-item">
+              <h6 class="text-info mb-0">{{ getActiveOfficersCount() }}</h6>
+              <small class="text-muted">Active Officers</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
