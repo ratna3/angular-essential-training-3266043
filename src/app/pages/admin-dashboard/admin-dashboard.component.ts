@@ -46,6 +46,11 @@ export class AdminDashboardComponent implements OnInit {
     }
 
     this.loadCurrentAnnouncement();
+    
+    // Refresh data periodically to show updated download counts
+    setInterval(() => {
+      this.loadCurrentAnnouncement();
+    }, 30000); // Refresh every 30 seconds
   }
 
   private loadCurrentAnnouncement(): void {
@@ -210,6 +215,37 @@ export class AdminDashboardComponent implements OnInit {
 
   public getTotalAnnouncements(): number {
     return this.announcementService.getAllAnnouncements().length;
+  }
+
+  public getTotalDownloads(): number {
+    // Get all files from all announcements and sum their downloads
+    const allAnnouncements = this.announcementService.getAllAnnouncements();
+    let totalDownloads = 0;
+    
+    allAnnouncements.forEach(announcement => {
+      if (announcement.attachments) {
+        announcement.attachments.forEach(attachment => {
+          totalDownloads += attachment.downloads;
+        });
+      }
+    });
+    
+    return totalDownloads;
+  }
+
+  public getTopDownloadedFiles(): FileAttachment[] {
+    // Get all files from all announcements and sort by downloads
+    const allFiles: FileAttachment[] = [];
+    const allAnnouncements = this.announcementService.getAllAnnouncements();
+    
+    allAnnouncements.forEach(announcement => {
+      if (announcement.attachments) {
+        allFiles.push(...announcement.attachments);
+      }
+    });
+    
+    // Sort by downloads in descending order
+    return allFiles.sort((a, b) => b.downloads - a.downloads);
   }
 
   public isEditMode(): boolean {
