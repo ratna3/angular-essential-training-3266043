@@ -1,3 +1,4 @@
 export const environment = {
-  appFooter: '© Gem Finder, LLC'
+  production: false,
+  appName: 'Announcement Portal'
 };

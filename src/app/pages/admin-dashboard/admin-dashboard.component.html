@@ -1,0 +1,158 @@
+<div class="container-fluid min-vh-100 bg-light">
+  <!-- Header -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-danger">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="bi bi-shield-check-fill me-2"></i>
+        Admin Dashboard
+      </a>
+      <div class="navbar-nav ms-auto">
+        <button class="btn btn-outline-light btn-sm" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-4">
+    <!-- Statistics Row -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="card text-center border-primary">
+          <div class="card-body">
+            <i class="bi bi-people-fill display-4 text-primary"></i>
+            <h3 class="mt-2">{{ getTotalViewers() }}</h3>
+            <p class="text-muted mb-0">Total Viewers</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-center border-danger">
+          <div class="card-body">
+            <i class="bi bi-heart-fill display-4 text-danger"></i>
+            <h3 class="mt-2">{{ getTotalLikes() }}</h3>
+            <p class="text-muted mb-0">Total Likes</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card text-center border-success">
+          <div class="card-body">
+            <i class="bi bi-megaphone-fill display-4 text-success"></i>
+            <h3 class="mt-2">1</h3>
+            <p class="text-muted mb-0">Active Announcement</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <!-- Announcement Form -->
+      <div class="col-lg-8">
+        <div class="card shadow-sm">
+          <div class="card-header bg-white">
+            <h5 class="mb-0">
+              <i class="bi bi-pencil-square me-2"></i>
+              Update Announcement
+            </h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="successMessage()" class="alert alert-success alert-dismissible">
+              <i class="bi bi-check-circle-fill me-2"></i>
+              {{ successMessage() }}
+            </div>
+
+            <form (ngSubmit)="onSubmit()" #announcementForm="ngForm">
+              <div class="mb-3">
+                <label for="title" class="form-label">Announcement Title</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  id="title"
+                  [value]="title()"
+                  (input)="updateTitle($any($event.target).value)"
+                  placeholder="Enter announcement title"
+                  required
+                >
+              </div>
+
+              <div class="mb-4">
+                <label for="content" class="form-label">Announcement Content</label>
+                <textarea
+                  class="form-control"
+                  id="content"
+                  rows="6"
+                  [value]="content()"
+                  (input)="updateContent($any($event.target).value)"
+                  placeholder="Enter announcement content..."
+                  required
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-danger"
+                [disabled]="isSubmitting() || !title().trim() || !content().trim()"
+              >
+                <span *ngIf="isSubmitting()" class="spinner-border spinner-border-sm me-2"></span>
+                {{ isSubmitting() ? 'Updating...' : 'Update Announcement' }}
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- Current Announcement Preview -->
+      <div class="col-lg-4">
+        <div class="card shadow-sm">
+          <div class="card-header bg-white">
+            <h6 class="mb-0">
+              <i class="bi bi-eye-fill me-2"></i>
+              Current Announcement
+            </h6>
+          </div>
+          <div *ngIf="currentAnnouncement() as ann" class="card-body">
+            <h6 class="text-primary">{{ ann.title }}</h6>
+            <p class="small text-muted mb-2">{{ ann.content }}</p>
+            <div class="d-flex justify-content-between text-muted small">
+              <span>
+                <i class="bi bi-heart-fill text-danger"></i> {{ ann.likes }}
+              </span>
+              <span>Updated: {{ formatDate(ann.updatedAt) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recent Viewers -->
+        <div class="card shadow-sm mt-3">
+          <div class="card-header bg-white">
+            <h6 class="mb-0">
+              <i class="bi bi-clock-history me-2"></i>
+              Recent Viewers
+            </h6>
+          </div>
+          <div class="card-body">
+            <div *ngIf="viewedUsers().length === 0" class="text-center text-muted py-2">
+              <small>No viewers yet</small>
+            </div>
+            <div *ngIf="viewedUsers().length > 0">
+              <div *ngFor="let user of viewedUsers().slice(-5)" class="d-flex align-items-center mb-2">
+                <i class="bi bi-person-circle text-primary me-2"></i>
+                <div class="flex-grow-1">
+                  <small class="d-block">{{ user.name }}</small>
+                  <small class="text-muted">{{ formatDate(user.viewedAt) }}</small>
+                </div>
+                <small *ngIf="user.hasLiked" class="text-danger">
+                  <i class="bi bi-heart-fill"></i>
+                </small>
+              </div>
+              <div *ngIf="viewedUsers().length > 5" class="text-center">
+                <small class="text-muted">+{{ viewedUsers().length - 5 }} more viewers</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,72 @@
+<div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-dark">
+  <div class="card shadow-lg" style="max-width: 400px; width: 100%;">
+    <div class="card-body p-4">
+      <div class="text-center mb-4">
+        <h1 class="h3 text-danger mb-3">
+          <i class="bi bi-shield-lock-fill"></i>
+          Admin Login
+        </h1>
+        <p class="text-muted">Secure access to admin dashboard</p>
+      </div>
+
+      <form (ngSubmit)="onSubmit()" #adminForm="ngForm">
+        <div class="mb-3">
+          <label for="username" class="form-label">Username</label>
+          <input
+            type="text"
+            class="form-control"
+            [class.is-invalid]="error()"
+            id="username"
+            [value]="username()"
+            (input)="updateUsername($any($event.target).value)"
+            placeholder="Enter admin username"
+            required
+            autocomplete="username"
+          >
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Password</label>
+          <input
+            type="password"
+            class="form-control"
+            [class.is-invalid]="error()"
+            id="password"
+            [value]="password()"
+            (input)="updatePassword($any($event.target).value)"
+            placeholder="Enter admin password"
+            required
+            autocomplete="current-password"
+          >
+          <div *ngIf="error()" class="invalid-feedback">
+            {{ error() }}
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          class="btn btn-danger w-100 py-2 mb-3"
+          [disabled]="isSubmitting()"
+        >
+          <span *ngIf="isSubmitting()" class="spinner-border spinner-border-sm me-2"></span>
+          {{ isSubmitting() ? 'Authenticating...' : 'Login' }}
+        </button>
+      </form>
+
+      <div class="text-center">
+        <button class="btn btn-link text-muted" (click)="goBack()">
+          <i class="bi bi-arrow-left me-1"></i>
+          Back to Landing Page
+        </button>
+      </div>
+
+      <div class="mt-4 p-3 bg-light rounded">
+        <small class="text-muted d-block text-center">
+          <strong>Demo Credentials:</strong><br>
+          Username: adminIndia<br>
+          Password: Indi@446
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
