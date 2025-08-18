@@ -1,0 +1,170 @@
+<div class="container-fluid min-vh-100 bg-light">
+  <!-- Header -->
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container">
+      <a class="navbar-brand" href="#">
+        <i class="bi bi-megaphone-fill me-2"></i>
+        Announcement Portal
+      </a>
+      <div class="navbar-nav ms-auto">
+        <span class="navbar-text text-light me-3">
+          Welcome, {{ currentUser()?.name }}!
+        </span>
+        <button class="btn btn-outline-light btn-sm" (click)="logout()">
+          <i class="bi bi-box-arrow-right"></i> Logout
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-4">
+    <!-- Announcement Card -->
+    <div class="row justify-content-center">
+      <div class="col-lg-8">
+        <div *ngIf="hasAnnouncement() && announcement() as ann; else noAnnouncement" class="card shadow-sm mb-4">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-start mb-3">
+              <h2 class="h3 text-primary mb-0">{{ ann.title }}</h2>
+              <small class="text-muted">
+                Updated: {{ formatDate(ann.updatedAt) }}
+              </small>
+            </div>
+            
+            <div class="announcement-content mb-4">
+              <p class="lead">{{ ann.content }}</p>
+            </div>
+
+            <div class="d-flex justify-content-between align-items-center">
+              <button 
+                class="btn btn-outline-danger btn-lg"
+                [class.btn-danger]="hasLiked()"
+                [class.text-white]="hasLiked()"
+                (click)="toggleLike()"
+              >
+                <i class="bi bi-heart-fill me-2"></i>
+                {{ hasLiked() ? 'Liked' : 'Like' }}
+                <span class="badge ms-2" [class.bg-white]="hasLiked()" [class.text-danger]="hasLiked()" [class.bg-danger]="!hasLiked()">
+                  {{ ann.likes }}
+                </span>
+              </button>
+              
+              <small class="text-muted">
+                <i class="bi bi-eye-fill me-1"></i>
+                {{ viewedUsers().length }} viewer{{ viewedUsers().length !== 1 ? 's' : '' }}
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #noAnnouncement>
+          <div class="card shadow-sm mb-4">
+            <div class="card-body p-5 text-center">
+              <i class="bi bi-megaphone display-1 text-muted mb-3"></i>
+              <h3 class="text-muted">No Announcements Available</h3>
+              <p class="text-muted">The admin hasn't posted any announcements yet. Check back later!</p>
+              <small class="text-muted">Contact the administrator if you believe this is an error.</small>
+            </div>
+          </div>
+        </ng-template>
+
+        <!-- Viewers List -->
+        <div class="card shadow-sm">
+          <div class="card-header bg-white">
+            <h5 class="mb-0">
+              <i class="bi bi-people-fill me-2"></i>
+              Recent Viewers
+            </h5>
+          </div>
+          <div class="card-body">
+            <div *ngIf="viewedUsers().length === 0" class="text-center text-muted py-3">
+              <i class="bi bi-person-x display-4 d-block mb-2"></i>
+              No viewers yet
+            </div>
+            
+            <div *ngIf="viewedUsers().length > 0" class="row g-2">
+              <div 
+                *ngFor="let user of viewedUsers()" 
+                class="col-md-6 col-lg-4"
+              >
+                <div 
+                  class="user-item p-3 border rounded cursor-pointer h-100"
+                  (click)="showUserDetail(user)"
+                >
+                  <div class="d-flex align-items-center">
+                    <div class="avatar me-3">
+                      <i class="bi bi-person-circle display-6 text-primary"></i>
+                    </div>
+                    <div class="flex-grow-1">
+                      <h6 class="mb-1">{{ user.name }}</h6>
+                      <small class="text-muted">
+                        {{ formatDate(user.viewedAt) }}
+                      </small>
+                      <div *ngIf="user.hasLiked" class="mt-1">
+                        <i class="bi bi-heart-fill text-danger me-1"></i>
+                        <small class="text-muted">Liked</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- User Details Modal -->
+<div 
+  *ngIf="showUserDetails()" 
+  class="modal fade show d-block" 
+  style="background-color: rgba(0,0,0,0.5);"
+  (click)="hideUserDetails()"
+>
+  <div class="modal-dialog modal-dialog-centered" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">User Details</h5>
+        <button type="button" class="btn-close" (click)="hideUserDetails()"></button>
+      </div>
+      <div *ngIf="selectedUser() as user" class="modal-body">
+        <div class="text-center mb-3">
+          <i class="bi bi-person-circle display-3 text-primary"></i>
+          <h4 class="mt-2">{{ user.name }}</h4>
+        </div>
+        <div class="row">
+          <div class="col-sm-6">
+            <strong>Email:</strong>
+          </div>
+          <div class="col-sm-6">
+            <a [href]="'mailto:' + user.email" class="text-decoration-none">
+              {{ user.email }}
+            </a>
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-sm-6">
+            <strong>Viewed At:</strong>
+          </div>
+          <div class="col-sm-6">
+            {{ formatDate(user.viewedAt) }}
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-sm-6">
+            <strong>Status:</strong>
+          </div>
+          <div class="col-sm-6">
+            <span *ngIf="user.hasLiked" class="badge bg-danger">
+              <i class="bi bi-heart-fill"></i> Liked
+            </span>
+            <span *ngIf="!user.hasLiked" class="badge bg-secondary">
+              Not Liked
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
