@@ -1,0 +1,94 @@
+<div class="container-fluid min-vh-100 d-flex align-items-center justify-content-center admin-bg">
+  <div class="card shadow-lg admin-card">
+    <div class="card-body p-5">
+      <!-- Header -->
+      <div class="text-center mb-4">
+        <div class="admin-icon mb-3">
+          <i class="bi bi-shield-lock-fill"></i>
+        </div>
+        <h1 class="h3 fw-bold text-dark mb-2">Admin Access</h1>
+        <p class="text-muted">
+          Enter your credentials to access the admin dashboard
+        </p>
+      </div>
+
+      <!-- Error Alert -->
+      <div *ngIf="errorMessage()" class="alert alert-danger d-flex align-items-center" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i>
+        {{ errorMessage() }}
+      </div>
+
+      <!-- Login Form -->
+      <form (ngSubmit)="onSubmit()" #adminForm="ngForm">
+        <div class="mb-3">
+          <label for="username" class="form-label fw-semibold">
+            <i class="bi bi-person-badge me-2"></i>Username
+          </label>
+          <input
+            type="text"
+            class="form-control form-control-lg"
+            id="username"
+            [value]="credentials().username"
+            (input)="onUsernameInput($event)"
+            name="username"
+            placeholder="Enter admin username"
+            required
+            autocomplete="username">
+        </div>
+
+        <div class="mb-4">
+          <label for="password" class="form-label fw-semibold">
+            <i class="bi bi-key me-2"></i>Password
+          </label>
+          <div class="input-group">
+            <input
+              [type]="showPassword() ? 'text' : 'password'"
+              class="form-control form-control-lg"
+              id="password"
+              [value]="credentials().password"
+              (input)="onPasswordInput($event)"
+              name="password"
+              placeholder="Enter admin password"
+              required
+              autocomplete="current-password">
+            <button
+              type="button"
+              class="btn btn-outline-secondary"
+              (click)="togglePasswordVisibility()">
+              <i [class]="showPassword() ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="d-grid gap-2">
+          <button
+            type="submit"
+            class="btn btn-primary btn-lg"
+            [disabled]="isSubmitting() || !credentials().username || !credentials().password">
+            <span *ngIf="isSubmitting()" class="spinner-border spinner-border-sm me-2" role="status"></span>
+            <i class="bi bi-box-arrow-in-right me-2" *ngIf="!isSubmitting()"></i>
+            {{ isSubmitting() ? 'Authenticating...' : 'Sign In' }}
+          </button>
+          
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            (click)="goHome()">
+            <i class="bi bi-house me-2"></i>
+            Back to Home
+          </button>
+        </div>
+      </form>
+
+      <!-- Hint for demo purposes -->
+      <div class="mt-4 p-3 bg-light rounded">
+        <small class="text-muted">
+          <i class="bi bi-info-circle me-1"></i>
+          <strong>Demo Credentials:</strong><br>
+          Username: adminIndia<br>
+          Password: Indi@446
+        </small>
+      </div>
+    </div>
+  </div>
+</div>
