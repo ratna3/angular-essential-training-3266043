@@ -23,6 +23,89 @@
   cursor: pointer;
 }
 
+/* File Attachments Styling */
+.attachments-section .card {
+  transition: all 0.2s ease-in-out;
+  border: 1px solid #e9ecef;
+}
+
+.attachments-section .card:hover {
+  border-color: #0d6efd;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transform: translateY(-2px);
+}
+
+.file-preview {
+  min-width: 60px;
+}
+
+.image-preview img {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+  border-radius: 6px;
+}
+
+.image-preview img:hover {
+  transform: scale(1.05);
+}
+
+.file-icon {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 8px;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Admin Controls Styling */
+.admin-controls {
+  border-left: 3px solid #dc3545;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Download/View Button Enhancements */
+.attachments-section .btn {
+  transition: all 0.2s ease;
+}
+
+.attachments-section .btn:hover {
+  transform: translateY(-1px);
+}
+
+/* File Type Icons Colors */
+.bi-file-earmark-pdf {
+  color: #dc3545 !important;
+}
+
+.bi-file-earmark-excel {
+  color: #198754 !important;
+}
+
+.bi-file-earmark-word {
+  color: #0d6efd !important;
+}
+
+.bi-file-earmark-image {
+  color: #fd7e14 !important;
+}
+
+.bi-file-earmark-zip {
+  color: #6f42c1 !important;
+}
+
 .modal.show {
   animation: fadeIn 0.15s ease-in;
 }

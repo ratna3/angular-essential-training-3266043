@@ -3,9 +3,11 @@ import { Component, OnInit, computed, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../../interfaces/user';
 import { Announcement } from '../../interfaces/announcement';
+import { FileAttachment } from '../../interfaces/file-attachment';
 import { AnnouncementService } from '../../services/announcement.service';
 import { UserService } from '../../services/user.service';
 import { AdminService } from '../../services/admin.service';
+import { FileService } from '../../services/file.service';
 
 @Component({
   selector: 'app-announcement',
@@ -38,6 +40,7 @@ export class AnnouncementComponent implements OnInit {
     private userService: UserService,
     private announcementService: AnnouncementService,
     private adminService: AdminService,
+    private fileService: FileService,
     private router: Router
   ) {}
 
@@ -125,5 +128,35 @@ export class AnnouncementComponent implements OnInit {
 
   public goToAdminDashboard(): void {
     this.router.navigate(['/admin/dashboard']);
+  }
+
+  public viewFile(attachment: FileAttachment): void {
+    const user = this.currentUser();
+    if (user) {
+      this.fileService.viewFile(attachment.id, user.id, user.name, user.email);
+    }
+  }
+
+  public downloadFile(attachment: FileAttachment): void {
+    const user = this.currentUser();
+    if (user) {
+      this.fileService.downloadFile(attachment.id, user.id, user.name, user.email);
+    }
+  }
+
+  public getFileIcon(fileType: string): string {
+    return this.fileService.getFileIcon(fileType);
+  }
+
+  public formatFileSize(bytes: number): string {
+    return this.fileService.formatFileSize(bytes);
+  }
+
+  public isImageFile(fileType: string): boolean {
+    return fileType.startsWith('image/');
+  }
+
+  public getImagePreview(attachment: FileAttachment): string {
+    return this.isImageFile(attachment.type) ? attachment.data : '';
   }
 }

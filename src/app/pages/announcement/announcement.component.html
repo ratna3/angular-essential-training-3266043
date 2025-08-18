@@ -45,6 +45,76 @@
               <p class="lead">{{ ann.content }}</p>
             </div>
 
+            <!-- File Attachments -->
+            <div *ngIf="ann.attachments && ann.attachments.length > 0" class="attachments-section mb-4">
+              <h6 class="text-muted mb-3">
+                <i class="bi bi-paperclip me-2"></i>
+                Attachments ({{ ann.attachments.length }})
+              </h6>
+              
+              <div class="row g-3">
+                <div *ngFor="let attachment of ann.attachments" class="col-md-6">
+                  <div class="card border-light h-100">
+                    <div class="card-body p-3">
+                      <div class="d-flex align-items-start">
+                        <!-- File Icon or Image Preview -->
+                        <div class="file-preview me-3">
+                          <div *ngIf="isImageFile(attachment.type)" class="image-preview">
+                            <img 
+                              [src]="getImagePreview(attachment)" 
+                              [alt]="attachment.originalName"
+                              class="img-thumbnail"
+                              style="width: 60px; height: 60px; object-fit: cover;"
+                              (click)="viewFile(attachment)"
+                              role="button"
+                            >
+                          </div>
+                          <div *ngIf="!isImageFile(attachment.type)" class="file-icon text-center">
+                            <i class="display-4" [class]="getFileIcon(attachment.type)" style="color: #0d6efd;"></i>
+                          </div>
+                        </div>
+                        
+                        <!-- File Info -->
+                        <div class="flex-grow-1">
+                          <h6 class="mb-1 text-truncate" [title]="attachment.originalName">
+                            {{ attachment.originalName }}
+                          </h6>
+                          <small class="text-muted d-block">
+                            {{ formatFileSize(attachment.size) }}
+                          </small>
+                          <small class="text-muted d-block">
+                            <i class="bi bi-download me-1"></i>
+                            {{ attachment.downloads }} downloads
+                            <span class="mx-1">•</span>
+                            <i class="bi bi-eye me-1"></i>
+                            {{ attachment.views }} views
+                          </small>
+                        </div>
+                      </div>
+                      
+                      <!-- Action Buttons -->
+                      <div class="mt-3 d-flex gap-2">
+                        <button 
+                          class="btn btn-outline-primary btn-sm flex-fill"
+                          (click)="viewFile(attachment)"
+                        >
+                          <i class="bi bi-eye me-1"></i>
+                          View
+                        </button>
+                        <button 
+                          class="btn btn-primary btn-sm flex-fill"
+                          (click)="downloadFile(attachment)"
+                        >
+                          <i class="bi bi-download me-1"></i>
+                          Download
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <!-- Admin Controls -->
             <div *ngIf="isAdmin()" class="admin-controls mb-3 p-3 bg-light rounded">
               <div class="d-flex justify-content-between align-items-center">

@@ -3,9 +3,11 @@ import { Component, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Announcement } from '../../interfaces/announcement';
+import { FileAttachment } from '../../interfaces/file-attachment';
 import { AdminService } from '../../services/admin.service';
 import { AnnouncementService } from '../../services/announcement.service';
 import { UserService } from '../../services/user.service';
+import { FileService } from '../../services/file.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -23,6 +25,9 @@ export class AdminDashboardComponent implements OnInit {
   public currentAnnouncement = signal<Announcement | null>(null);
   public showDeleteConfirm = signal(false);
   public editingAnnouncementId = signal<string | null>(null);
+  public selectedFiles = signal<File[]>([]);
+  public uploadedAttachments = signal<FileAttachment[]>([]);
+  public isUploadingFiles = signal(false);
 
   public viewedUsers = this.userService.viewedUsers;
 
@@ -30,6 +35,7 @@ export class AdminDashboardComponent implements OnInit {
     private adminService: AdminService,
     private announcementService: AnnouncementService,
     private userService: UserService,
+    private fileService: FileService,
     private router: Router
   ) {}
 
@@ -50,10 +56,12 @@ export class AdminDashboardComponent implements OnInit {
     if (!this.editingAnnouncementId()) {
       this.title.set('');
       this.content.set('');
+      this.uploadedAttachments.set([]);
+      this.selectedFiles.set([]);
     }
   }
 
-  public onSubmit(): void {
+  public async onSubmit(): Promise<void> {
     if (!this.title().trim() || !this.content().trim()) {
       return;
     }
@@ -62,6 +70,25 @@ export class AdminDashboardComponent implements OnInit {
     this.successMessage.set('');
 
     try {
+      // Upload files if any selected
+      const allAttachments = [...this.uploadedAttachments()];
+      
+      if (this.selectedFiles().length > 0) {
+        this.isUploadingFiles.set(true);
+        
+        for (const file of this.selectedFiles()) {
+          try {
+            const attachment = await this.fileService.uploadFile(file);
+            allAttachments.push(attachment);
+          } catch (error) {
+            console.error('Error uploading file:', error);
+            // Continue with other files
+          }
+        }
+        
+        this.isUploadingFiles.set(false);
+      }
+
       const editingId = this.editingAnnouncementId();
       
       if (editingId) {
@@ -69,7 +96,8 @@ export class AdminDashboardComponent implements OnInit {
         const updated = this.announcementService.updateAnnouncement(
           editingId,
           this.title().trim(),
-          this.content().trim()
+          this.content().trim(),
+          allAttachments
         );
         
         if (updated) {
@@ -80,13 +108,16 @@ export class AdminDashboardComponent implements OnInit {
         // Create new announcement
         this.announcementService.createNewAnnouncement(
           this.title().trim(),
-          this.content().trim()
+          this.content().trim(),
+          allAttachments
         );
         this.successMessage.set('New announcement created successfully!');
         
         // Clear form after creating
         this.title.set('');
         this.content.set('');
+        this.selectedFiles.set([]);
+        this.uploadedAttachments.set([]);
       }
       
       this.currentAnnouncement.set(this.announcementService.getLatestAnnouncement());
@@ -100,6 +131,7 @@ export class AdminDashboardComponent implements OnInit {
       console.error('Error with announcement:', error);
     } finally {
       this.isSubmitting.set(false);
+      this.isUploadingFiles.set(false);
     }
   }
 
@@ -190,6 +222,8 @@ export class AdminDashboardComponent implements OnInit {
       this.editingAnnouncementId.set(current.id);
       this.title.set(current.title);
       this.content.set(current.content);
+      this.uploadedAttachments.set([...current.attachments]);
+      this.selectedFiles.set([]);
     }
   }
 
@@ -197,5 +231,40 @@ export class AdminDashboardComponent implements OnInit {
     this.editingAnnouncementId.set(null);
     this.title.set('');
     this.content.set('');
+    this.uploadedAttachments.set([]);
+    this.selectedFiles.set([]);
+  }
+
+  public onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files) {
+      const newFiles = Array.from(input.files);
+      this.selectedFiles.update(files => [...files, ...newFiles]);
+      
+      // Clear the input so the same file can be selected again
+      input.value = '';
+    }
+  }
+
+  public removeSelectedFile(index: number): void {
+    this.selectedFiles.update(files => files.filter((_, i) => i !== index));
+  }
+
+  public removeUploadedAttachment(index: number): void {
+    this.uploadedAttachments.update(attachments => attachments.filter((_, i) => i !== index));
+  }
+
+  public getFileIcon(fileType: string): string {
+    return this.fileService.getFileIcon(fileType);
+  }
+
+  public formatFileSize(bytes: number): string {
+    return this.fileService.formatFileSize(bytes);
+  }
+
+  public getTotalFileSize(): number {
+    const selectedSize = this.selectedFiles().reduce((total, file) => total + file.size, 0);
+    const uploadedSize = this.uploadedAttachments().reduce((total, att) => total + att.size, 0);
+    return selectedSize + uploadedSize;
   }
 }

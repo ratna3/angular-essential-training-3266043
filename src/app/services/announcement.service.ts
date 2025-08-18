@@ -1,5 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { Announcement } from '../interfaces/announcement';
+import { FileAttachment } from '../interfaces/file-attachment';
 
 @Injectable({
   providedIn: 'root'
@@ -24,7 +25,8 @@ export class AnnouncementService {
         createdAt: new Date(),
         updatedAt: new Date(),
         likes: 0,
-        likedBy: []
+        likedBy: [],
+        attachments: []
       };
       announcements.push(defaultAnnouncement);
       this.saveAnnouncements(announcements);
@@ -47,7 +49,7 @@ export class AnnouncementService {
     return this.announcements();
   }
 
-  public createOrUpdateAnnouncement(title: string, content: string): Announcement {
+  public createOrUpdateAnnouncement(title: string, content: string, attachments: FileAttachment[] = []): Announcement {
     const now = new Date();
     const latest = this.getLatestAnnouncement();
     
@@ -57,7 +59,8 @@ export class AnnouncementService {
         ...latest,
         title: title.trim(),
         content: content.trim(),
-        updatedAt: now
+        updatedAt: now,
+        attachments: attachments
       };
       
       this.announcements.update(announcements => 
@@ -72,7 +75,8 @@ export class AnnouncementService {
         createdAt: now,
         updatedAt: now,
         likes: 0,
-        likedBy: []
+        likedBy: [],
+        attachments: attachments
       };
       
       this.announcements.update(announcements => [...announcements, newAnnouncement]);
@@ -83,7 +87,7 @@ export class AnnouncementService {
     return latestAnnouncement as Announcement;
   }
 
-  public createNewAnnouncement(title: string, content: string): Announcement {
+  public createNewAnnouncement(title: string, content: string, attachments: FileAttachment[] = []): Announcement {
     const now = new Date();
     
     // Always create a new announcement
@@ -94,7 +98,8 @@ export class AnnouncementService {
       createdAt: now,
       updatedAt: now,
       likes: 0,
-      likedBy: []
+      likedBy: [],
+      attachments: attachments
     };
     
     this.announcements.update(announcements => [...announcements, newAnnouncement]);
@@ -102,7 +107,7 @@ export class AnnouncementService {
     return newAnnouncement;
   }
 
-  public updateAnnouncement(id: string, title: string, content: string): Announcement | null {
+  public updateAnnouncement(id: string, title: string, content: string, attachments: FileAttachment[] = []): Announcement | null {
     const now = new Date();
     let updatedAnnouncement: Announcement | null = null;
     
@@ -113,7 +118,8 @@ export class AnnouncementService {
             ...a,
             title: title.trim(),
             content: content.trim(),
-            updatedAt: now
+            updatedAt: now,
+            attachments: attachments
           };
           return updatedAnnouncement;
         }
