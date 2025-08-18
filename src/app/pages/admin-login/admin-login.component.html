@@ -15,10 +15,11 @@
           <input
             type="text"
             class="form-control"
-            [class.is-invalid]="error()"
+            [class.is-invalid]="errorMessage"
             id="username"
-            [value]="username()"
-            (input)="updateUsername($any($event.target).value)"
+            [(ngModel)]="usernameValue"
+            (ngModelChange)="updateUsername()"
+            name="username"
             placeholder="Enter admin username"
             required
             autocomplete="username"
@@ -30,26 +31,27 @@
           <input
             type="password"
             class="form-control"
-            [class.is-invalid]="error()"
+            [class.is-invalid]="errorMessage"
             id="password"
-            [value]="password()"
-            (input)="updatePassword($any($event.target).value)"
+            [(ngModel)]="passwordValue"
+            (ngModelChange)="updatePassword()"
+            name="password"
             placeholder="Enter admin password"
             required
             autocomplete="current-password"
           >
-          <div *ngIf="error()" class="invalid-feedback">
-            {{ error() }}
+          <div *ngIf="errorMessage" class="invalid-feedback">
+            {{ errorMessage }}
           </div>
         </div>
 
         <button
           type="submit"
           class="btn btn-danger w-100 py-2 mb-3"
-          [disabled]="isSubmitting()"
+          [disabled]="isSubmitting"
         >
-          <span *ngIf="isSubmitting()" class="spinner-border spinner-border-sm me-2"></span>
-          {{ isSubmitting() ? 'Authenticating...' : 'Login' }}
+          <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+          {{ isSubmitting ? 'Authenticating...' : 'Login' }}
         </button>
       </form>
 

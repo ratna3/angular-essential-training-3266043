@@ -15,15 +15,16 @@
           <input
             type="text"
             class="form-control"
-            [class.is-invalid]="errors().name"
+            [class.is-invalid]="errors.name"
             id="name"
-            [value]="name()"
-            (input)="updateName($any($event.target).value)"
+            [(ngModel)]="nameValue"
+            (ngModelChange)="updateName()"
+            name="name"
             placeholder="Enter your full name"
             required
           >
-          <div *ngIf="errors().name" class="invalid-feedback">
-            {{ errors().name }}
+          <div *ngIf="errors.name" class="invalid-feedback">
+            {{ errors.name }}
           </div>
         </div>
 
@@ -32,25 +33,26 @@
           <input
             type="email"
             class="form-control"
-            [class.is-invalid]="errors().email"
+            [class.is-invalid]="errors.email"
             id="email"
-            [value]="email()"
-            (input)="updateEmail($any($event.target).value)"
+            [(ngModel)]="emailValue"
+            (ngModelChange)="updateEmail()"
+            name="email"
             placeholder="Enter your email address"
             required
           >
-          <div *ngIf="errors().email" class="invalid-feedback">
-            {{ errors().email }}
+          <div *ngIf="errors.email" class="invalid-feedback">
+            {{ errors.email }}
           </div>
         </div>
 
         <button
           type="submit"
           class="btn btn-primary w-100 py-2"
-          [disabled]="isSubmitting()"
+          [disabled]="isSubmitting"
         >
-          <span *ngIf="isSubmitting()" class="spinner-border spinner-border-sm me-2"></span>
-          {{ isSubmitting() ? 'Processing...' : 'Access Announcements' }}
+          <span *ngIf="isSubmitting" class="spinner-border spinner-border-sm me-2"></span>
+          {{ isSubmitting ? 'Processing...' : 'Access Announcements' }}
         </button>
       </form>
 

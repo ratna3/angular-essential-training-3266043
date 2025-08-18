@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AdminService } from '../../services/admin.service';
@@ -12,10 +12,10 @@ import { AdminService } from '../../services/admin.service';
   styleUrls: ['./admin-login.component.css']
 })
 export class AdminLoginComponent {
-  public username = signal('');
-  public password = signal('');
-  public error = signal('');
-  public isSubmitting = signal(false);
+  public usernameValue = '';
+  public passwordValue = '';
+  public errorMessage = '';
+  public isSubmitting = false;
 
   constructor(
     private adminService: AdminService,
@@ -23,39 +23,37 @@ export class AdminLoginComponent {
   ) {}
 
   public onSubmit(): void {
-    if (!this.username().trim() || !this.password().trim()) {
-      this.error.set('Please enter both username and password');
+    if (!this.usernameValue.trim() || !this.passwordValue.trim()) {
+      this.errorMessage = 'Please enter both username and password';
       return;
     }
 
-    this.isSubmitting.set(true);
-    this.error.set('');
+    this.isSubmitting = true;
+    this.errorMessage = '';
 
     // Simulate a small delay for better UX
     setTimeout(() => {
-      const isValid = this.adminService.login(this.username().trim(), this.password());
+      const isValid = this.adminService.login(this.usernameValue.trim(), this.passwordValue);
       
       if (isValid) {
         this.router.navigate(['/admin/dashboard']);
       } else {
-        this.error.set('Invalid username or password');
+        this.errorMessage = 'Invalid username or password';
       }
       
-      this.isSubmitting.set(false);
+      this.isSubmitting = false;
     }, 500);
   }
 
-  public updateUsername(value: string): void {
-    this.username.set(value);
-    if (this.error()) {
-      this.error.set('');
+  public updateUsername(): void {
+    if (this.errorMessage) {
+      this.errorMessage = '';
     }
   }
 
-  public updatePassword(value: string): void {
-    this.password.set(value);
-    if (this.error()) {
-      this.error.set('');
+  public updatePassword(): void {
+    if (this.errorMessage) {
+      this.errorMessage = '';
     }
   }
 
