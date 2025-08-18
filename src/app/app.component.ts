@@ -9,5 +9,5 @@ import { RouterOutlet } from '@angular/router';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  public title = 'Announcement Portal';
+  public title = 'UPID Suchana Portal';
 }
