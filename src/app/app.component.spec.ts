@@ -8,8 +8,7 @@ import { MessageService } from './services/message.service';
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [RouterTestingModule, HttpClientTestingModule],
-      declarations: [AppComponent],
+      imports: [RouterTestingModule, HttpClientTestingModule, AppComponent],
       providers: [MessageService, HttpClient]
     }).compileComponents();
   });

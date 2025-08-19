@@ -104,7 +104,7 @@
               </div>
             </div>
 
-            <!-- Admin Controls -->
+            <!-- Admin Controls with Hierarchical Permissions -->
             <div *ngIf="isAdmin()" class="admin-controls mb-3 p-3 bg-light rounded">
               <div class="d-flex justify-content-between align-items-center">
                 <span class="text-muted">
@@ -117,9 +117,18 @@
                     (click)="goToAdminDashboard()"
                   >
                     <i class="bi bi-pencil-square me-1"></i>
-                    Edit / Add New
+                    Dashboard
                   </button>
                   <button 
+                    *ngIf="canEditAnnouncement()"
+                    class="btn btn-outline-primary btn-sm"
+                    (click)="goToAdminDashboard()"
+                  >
+                    <i class="bi bi-pencil-square me-1"></i>
+                    Edit
+                  </button>
+                  <button 
+                    *ngIf="canDeleteAnnouncement()"
                     class="btn btn-outline-danger btn-sm"
                     (click)="confirmDelete()"
                     [disabled]="isDeleting()"
@@ -132,6 +141,14 @@
                     </span>
                   </button>
                 </div>
+              </div>
+              
+              <!-- Permission Warning -->
+              <div *ngIf="!canEditAnnouncement() && !canDeleteAnnouncement()" class="mt-2">
+                <small class="text-warning">
+                  <i class="bi bi-exclamation-triangle me-1"></i>
+                  Limited permissions: You can only view this announcement
+                </small>
               </div>
             </div>
 

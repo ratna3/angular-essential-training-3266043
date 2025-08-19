@@ -1,68 +1,115 @@
-<div class="container-fluid vh-100 d-flex align-items-center justify-content-center bg-light">
-  <div class="card shadow-lg" style="max-width: 500px; width: 100%;">
-    <div class="card-body p-5">
-      <div class="text-center mb-4">
-        <div class="mb-3">
-          <img src="assets/UPIDlogo.svg" alt="UPID Logo" style="height: 80px; width: auto;">
-        </div>
-        <h1 class="h2 text-primary mb-3">
-          उत्तर प्रदेश सिंचाई विभाग
-        </h1>
-        <h2 class="h4 text-secondary mb-3">
-          UPID Suchana Portal
-        </h2>
-        <p class="text-muted">Enter your details to access the latest announcements</p>
-      </div>
+<div class="landing-container d-flex align-items-center justify-content-center">
+  <!-- Animated water droplets for irrigation theme -->
+  <div class="water-element"></div>
+  <div class="water-element"></div>
+  <div class="water-element"></div>
+  <div class="water-element"></div>
+  <div class="water-element"></div>
+  <div class="water-element"></div>
+  <div class="water-element"></div>
+  <div class="water-element"></div>
+  <div class="water-element"></div>
 
-      <form (ngSubmit)="onSubmit()" #userForm="ngForm">
-        <div class="mb-3">
-          <label for="name" class="form-label">Full Name</label>
-          <input
-            type="text"
-            class="form-control"
-            [class.is-invalid]="errors().name"
-            id="name"
-            [value]="name()"
-            (input)="updateName($any($event.target).value)"
-            placeholder="Enter your full name"
-            required
-          >
-          <div *ngIf="errors().name" class="invalid-feedback">
-            {{ errors().name }}
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-5 col-md-7 col-sm-9">
+        <div class="card shadow-lg">
+          <div class="card-body p-5">
+            <div class="text-center mb-4">
+              <div class="mb-4">
+                <img src="assets/UPIDlogo.svg" alt="UPID Logo" class="upid-logo" style="height: 80px; width: auto;">
+              </div>
+              <h1 class="h2 mb-3">
+                <i class="bi bi-droplet-fill"></i>
+                उत्तर प्रदेश सिंचाई विभाग
+              </h1>
+              <h2 class="h4 text-secondary mb-3">
+                <i class="bi bi-megaphone-fill me-2 text-primary"></i>
+                UPID Suchana Portal
+              </h2>
+              <p class="lead text-muted">
+                Access the latest announcements and updates from the 
+                Uttar Pradesh Irrigation Department
+              </p>
+            </div>
+
+            <form (ngSubmit)="onSubmit()" #userForm="ngForm">
+              <div class="mb-3">
+                <label for="name" class="form-label fw-semibold text-dark">
+                  <i class="bi bi-person me-2 text-primary"></i>Full Name
+                </label>
+                <input
+                  type="text"
+                  class="form-control"
+                  [class.is-invalid]="errors().name"
+                  id="name"
+                  [value]="name()"
+                  (input)="updateName($any($event.target).value)"
+                  placeholder="Enter your full name"
+                  required
+                >
+                <div *ngIf="errors().name" class="text-danger mt-1">
+                  <i class="bi bi-exclamation-circle me-1"></i>{{ errors().name }}
+                </div>
+              </div>
+
+              <div class="mb-4">
+                <label for="email" class="form-label fw-semibold text-dark">
+                  <i class="bi bi-envelope me-2 text-primary"></i>Email Address
+                </label>
+                <input
+                  type="email"
+                  class="form-control"
+                  [class.is-invalid]="errors().email"
+                  id="email"
+                  [value]="email()"
+                  (input)="updateEmail($any($event.target).value)"
+                  placeholder="Enter your email address"
+                  required
+                >
+                <div *ngIf="errors().email" class="text-danger mt-1">
+                  <i class="bi bi-exclamation-circle me-1"></i>{{ errors().email }}
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                class="btn btn-primary w-100 py-3 mb-3"
+                [disabled]="isSubmitting()"
+              >
+                <span *ngIf="isSubmitting()" class="spinner-border spinner-border-sm me-2"></span>
+                <i *ngIf="!isSubmitting()" class="bi bi-arrow-right-circle me-2"></i>
+                {{ isSubmitting() ? 'Processing...' : 'Access Suchana Portal' }}
+              </button>
+            </form>
+
+            <div class="text-center">
+              <hr class="my-3">
+              <small class="text-muted d-block mb-2">Administrative Access</small>
+              <a routerLink="/admin" class="admin-link">
+                <i class="bi bi-shield-check me-1"></i>Admin Login
+              </a>
+            </div>
+
+            <!-- Additional Information -->
+            <div class="mt-4 p-3 rounded" style="background: rgba(30, 64, 175, 0.05);">
+              <div class="row text-center">
+                <div class="col-4">
+                  <i class="bi bi-water display-6 text-primary"></i>
+                  <small class="d-block text-muted mt-1">Water<br>Management</small>
+                </div>
+                <div class="col-4">
+                  <i class="bi bi-geo-alt display-6 text-success"></i>
+                  <small class="d-block text-muted mt-1">Canal<br>Systems</small>
+                </div>
+                <div class="col-4">
+                  <i class="bi bi-graph-up display-6 text-info"></i>
+                  <small class="d-block text-muted mt-1">Agricultural<br>Development</small>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
-
-        <div class="mb-4">
-          <label for="email" class="form-label">Email Address</label>
-          <input
-            type="email"
-            class="form-control"
-            [class.is-invalid]="errors().email"
-            id="email"
-            [value]="email()"
-            (input)="updateEmail($any($event.target).value)"
-            placeholder="Enter your email address"
-            required
-          >
-          <div *ngIf="errors().email" class="invalid-feedback">
-            {{ errors().email }}
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          class="btn btn-primary w-100 py-2"
-          [disabled]="isSubmitting()"
-        >
-          <span *ngIf="isSubmitting()" class="spinner-border spinner-border-sm me-2"></span>
-          {{ isSubmitting() ? 'Processing...' : 'Access Announcements' }}
-        </button>
-      </form>
-
-      <div class="text-center mt-3">
-        <small class="text-muted">
-          <a routerLink="/admin" class="text-decoration-none">Admin Login</a>
-        </small>
       </div>
     </div>
   </div>

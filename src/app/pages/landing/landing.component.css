@@ -1,28 +1,343 @@
+/* Irrigation Department Landing Page Styles */
+.landing-container {
+  background: linear-gradient(135deg, 
+    rgba(224, 242, 254, 0.9) 0%,
+    rgba(186, 230, 253, 0.8) 25%,
+    rgba(125, 211, 252, 0.7) 50%,
+    rgba(56, 189, 248, 0.6) 75%,
+    rgba(14, 165, 233, 0.5) 100%
+  );
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Irrigation themed background elements */
+.landing-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    /* Water canal patterns */
+    linear-gradient(45deg, rgba(59, 130, 246, 0.05) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(16, 185, 129, 0.05) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(59, 130, 246, 0.05) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(16, 185, 129, 0.05) 75%);
+  background-size: 60px 60px;
+  background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
+  animation: irrigationFlow 20s linear infinite;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@keyframes irrigationFlow {
+  0% { background-position: 0 0, 0 30px, 30px -30px, -30px 0px; }
+  100% { background-position: 60px 60px, 60px 90px, 90px 30px, 30px 60px; }
+}
+
 .card {
   border: none;
-  border-radius: 15px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 8px 16px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  position: relative;
+  z-index: 2;
+  overflow: hidden;
 }
 
-.btn-primary {
-  border-radius: 8px;
-  font-weight: 500;
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, 
+    #1e40af 0%, 
+    #0ea5e9 25%, 
+    #16a34a 50%, 
+    #0ea5e9 75%, 
+    #1e40af 100%
+  );
+  background-size: 200% 100%;
+  animation: borderFlow 3s linear infinite;
 }
 
-.form-control {
-  border-radius: 8px;
-  border: 2px solid #e9ecef;
-  padding: 12px;
+@keyframes borderFlow {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
-.form-control:focus {
-  border-color: #0d6efd;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.15),
+    0 12px 24px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.bg-light {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+/* UPID Logo Enhancement */
+.upid-logo {
+  filter: drop-shadow(0 4px 8px rgba(30, 64, 175, 0.3));
+  transition: all 0.3s ease;
+}
+
+.upid-logo:hover {
+  filter: drop-shadow(0 8px 16px rgba(30, 64, 175, 0.4));
+  transform: scale(1.05);
+}
+
+/* Enhanced Typography */
+h1 {
+  background: linear-gradient(135deg, #1e40af, #0ea5e9, #16a34a);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: textGradientShift 4s ease-in-out infinite;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes textGradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
 }
 
 h1 i {
-  margin-right: 10px;
+  margin-right: 15px;
+  color: #1e40af;
+  filter: drop-shadow(0 2px 4px rgba(30, 64, 175, 0.3));
 }
+
+.lead {
+  color: #475569;
+  font-weight: 500;
+  line-height: 1.7;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Enhanced Form Styling */
+.form-control {
+  border-radius: 12px;
+  border: 2px solid rgba(59, 130, 246, 0.2);
+  padding: 15px 20px;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  font-size: 1rem;
+}
+
+.form-control:focus {
+  border-color: #1e40af;
+  box-shadow: 
+    0 0 0 0.25rem rgba(30, 64, 175, 0.15),
+    0 4px 12px rgba(30, 64, 175, 0.1);
+  background: white;
+  transform: translateY(-2px);
+}
+
+.form-control::placeholder {
+  color: #94a3b8;
+  font-weight: 400;
+}
+
+/* Enhanced Button Styling */
+.btn-primary {
+  border-radius: 12px;
+  font-weight: 600;
+  padding: 15px 30px;
+  background: linear-gradient(135deg, #1e40af, #0ea5e9);
+  border: none;
+  box-shadow: 
+    0 8px 20px rgba(30, 64, 175, 0.3),
+    0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.3), 
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 
+    0 12px 28px rgba(30, 64, 175, 0.4),
+    0 4px 8px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, #1d4ed8, #0284c7);
+}
+
+.btn-primary:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
+/* Admin Login Link Enhancement */
+.admin-link {
+  color: #1e40af;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: rgba(30, 64, 175, 0.1);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(30, 64, 175, 0.2);
+}
+
+.admin-link:hover {
+  background: rgba(30, 64, 175, 0.15);
+  color: #1d4ed8;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(30, 64, 175, 0.2);
+}
+
+/* Error Message Styling */
+.text-danger {
+  background: rgba(220, 38, 38, 0.1);
+  padding: 8px 12px;
+  border-radius: 8px;
+  border-left: 3px solid #dc2626;
+  margin-top: 8px;
+  font-weight: 500;
+}
+
+/* Loading State */
+.btn-primary:disabled {
+  background: linear-gradient(135deg, #94a3b8, #cbd5e1);
+  box-shadow: none;
+  transform: none;
+  cursor: not-allowed;
+}
+
+.spinner-border-sm {
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+/* Responsive Enhancements */
+@media (max-width: 768px) {
+  .landing-container::before {
+    background-size: 40px 40px;
+    background-position: 0 0, 0 20px, 20px -20px, -20px 0px;
+  }
+  
+  @keyframes irrigationFlow {
+    0% { background-position: 0 0, 0 20px, 20px -20px, -20px 0px; }
+    100% { background-position: 40px 40px, 40px 60px, 60px 20px, 20px 40px; }
+  }
+  
+  .card {
+    border-radius: 16px;
+    margin: 15px;
+  }
+  
+  h1 {
+    font-size: 1.75rem;
+  }
+  
+  .btn-primary {
+    padding: 12px 24px;
+    width: 100%;
+  }
+  
+  .form-control {
+    padding: 12px 16px;
+  }
+}
+
+@media (max-width: 576px) {
+  h1 {
+    font-size: 1.5rem;
+  }
+  
+  .upid-logo {
+    height: 60px !important;
+  }
+  
+  .lead {
+    font-size: 0.95rem;
+  }
+}
+
+/* Accessibility Enhancements */
+.form-control:focus-visible {
+  outline: 2px solid #1e40af;
+  outline-offset: 2px;
+}
+
+.btn-primary:focus-visible {
+  outline: 2px solid #1e40af;
+  outline-offset: 4px;
+}
+
+/* Animation for form validation */
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+.form-control.is-invalid {
+  animation: shake 0.5s ease-in-out;
+  border-color: #dc2626;
+}
+
+/* Irrigation Department Specific Elements */
+.water-element {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: rgba(14, 165, 233, 0.6);
+  border-radius: 50%;
+  animation: waterDrop 8s infinite linear;
+}
+
+@keyframes waterDrop {
+  0% {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}
+
+.water-element:nth-child(1) { left: 10%; animation-delay: 0s; }
+.water-element:nth-child(2) { left: 20%; animation-delay: 1s; }
+.water-element:nth-child(3) { left: 30%; animation-delay: 2s; }
+.water-element:nth-child(4) { left: 40%; animation-delay: 3s; }
+.water-element:nth-child(5) { left: 50%; animation-delay: 4s; }
+.water-element:nth-child(6) { left: 60%; animation-delay: 5s; }
+.water-element:nth-child(7) { left: 70%; animation-delay: 6s; }
+.water-element:nth-child(8) { left: 80%; animation-delay: 7s; }
+.water-element:nth-child(9) { left: 90%; animation-delay: 8s; }

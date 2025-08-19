@@ -4,9 +4,11 @@ import { Router } from '@angular/router';
 import { User } from '../../interfaces/user';
 import { Announcement } from '../../interfaces/announcement';
 import { FileAttachment } from '../../interfaces/file-attachment';
+import { Admin } from '../../interfaces/admin';
 import { AnnouncementService } from '../../services/announcement.service';
 import { UserService } from '../../services/user.service';
 import { AdminService } from '../../services/admin.service';
+import { HierarchicalAdminService } from '../../services/hierarchical-admin.service';
 import { FileService } from '../../services/file.service';
 
 @Component({
@@ -31,7 +33,30 @@ export class AnnouncementComponent implements OnInit {
   });
 
   public isAdmin = computed(() => {
-    return this.adminService.isAuthenticated();
+    // Check both admin service and hierarchical admin service
+    return this.adminService.isAuthenticated() || this.hierarchicalAdminService.getCurrentAdmin() !== null;
+  });
+
+  public canEditAnnouncement = computed(() => {
+    const currentAdmin = this.hierarchicalAdminService.getCurrentAdmin();
+    const announcement = this.announcement();
+    
+    if (!currentAdmin || !announcement || !announcement.createdBy) {
+      return false;
+    }
+    
+    return this.hierarchicalAdminService.canEditAnnouncement(currentAdmin, announcement.createdBy);
+  });
+
+  public canDeleteAnnouncement = computed(() => {
+    const currentAdmin = this.hierarchicalAdminService.getCurrentAdmin();
+    const announcement = this.announcement();
+    
+    if (!currentAdmin || !announcement || !announcement.createdBy) {
+      return false;
+    }
+    
+    return this.hierarchicalAdminService.canDeleteAnnouncement(currentAdmin, announcement.createdBy);
   });
 
   public viewedUsers = this.userService.viewedUsers;
@@ -40,6 +65,7 @@ export class AnnouncementComponent implements OnInit {
     private userService: UserService,
     private announcementService: AnnouncementService,
     private adminService: AdminService,
+    private hierarchicalAdminService: HierarchicalAdminService,
     private fileService: FileService,
     private router: Router
   ) {}
@@ -91,6 +117,8 @@ export class AnnouncementComponent implements OnInit {
 
   public logout(): void {
     this.userService.logout();
+    // Also clear any admin sessions for security
+    this.adminService.logout();
     this.router.navigate(['/']);
   }
 

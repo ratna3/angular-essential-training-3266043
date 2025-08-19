@@ -181,8 +181,13 @@ export class HierarchicalAdminService {
            currentAdmin.role.seniorityLevel < announcementCreator.role.seniorityLevel;
   }
 
-  public getAdminsByDepartment(): { [department: string]: Admin[] } {
+  public getAdminsByDepartment(departmentName?: string): { [department: string]: Admin[] } | Admin[] {
     const admins = this.adminUsersSignal();
+    
+    if (departmentName) {
+      return admins.filter(admin => admin.department === departmentName);
+    }
+    
     const adminsByDept: { [department: string]: Admin[] } = {};
     
     admins.forEach(admin => {
@@ -201,7 +206,7 @@ export class HierarchicalAdminService {
   }
 
   public getHierarchyTree(): { [department: string]: Admin[] } {
-    return this.getAdminsByDepartment();
+    return this.getAdminsByDepartment() as { [department: string]: Admin[] };
   }
 
   public getAllRoles(): Role[] {
@@ -214,6 +219,21 @@ export class HierarchicalAdminService {
 
   public getAdminById(adminId: string): Admin | undefined {
     return this.adminUsersSignal().find(admin => admin.id === adminId);
+  }
+
+  public getAllAdmins(): Admin[] {
+    return this.adminUsersSignal();
+  }
+
+  public updateAdmin(updatedAdmin: Admin): boolean {
+    const admins = this.adminUsersSignal();
+    const index = admins.findIndex(admin => admin.id === updatedAdmin.id);
+    if (index !== -1) {
+      admins[index] = updatedAdmin;
+      this.saveAdmins(admins);
+      return true;
+    }
+    return false;
   }
 
   private loadCurrentAdmin(): void {
@@ -245,14 +265,5 @@ export class HierarchicalAdminService {
   private saveAdmins(admins: Admin[]): void {
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify(admins));
     this.adminUsersSignal.set(admins);
-  }
-
-  private updateAdmin(updatedAdmin: Admin): void {
-    const admins = this.adminUsersSignal();
-    const index = admins.findIndex(admin => admin.id === updatedAdmin.id);
-    if (index !== -1) {
-      admins[index] = updatedAdmin;
-      this.saveAdmins(admins);
-    }
   }
 }

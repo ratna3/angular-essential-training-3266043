@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { AdminGuard } from './guards/admin.guard';
 
 export const routes: Routes = [
   {
@@ -20,7 +21,8 @@ export const routes: Routes = [
   {
     path: 'admin/dashboard',
     loadComponent: () => import('./pages/admin-dashboard/admin-dashboard.component').then(m => m.AdminDashboardComponent),
-    title: 'UPID Suchana Portal | Admin Dashboard'
+    title: 'UPID Suchana Portal | Admin Dashboard',
+    canActivate: [AdminGuard]
   },
   {
     path: '**',

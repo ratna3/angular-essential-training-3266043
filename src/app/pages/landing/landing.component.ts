@@ -3,6 +3,7 @@ import { Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { UserService } from '../../services/user.service';
+import { AdminService } from '../../services/admin.service';
 
 @Component({
   selector: 'app-landing',
@@ -19,6 +20,7 @@ export class LandingComponent {
 
   constructor(
     private userService: UserService,
+    private adminService: AdminService,
     private router: Router
   ) {}
 
@@ -27,6 +29,8 @@ export class LandingComponent {
       this.isSubmitting.set(true);
       
       try {
+        // Clear any admin sessions when normal user logs in for security
+        this.adminService.logout();
         this.userService.createUser(this.name(), this.email());
         this.router.navigate(['/announcement']);
       } catch (error) {

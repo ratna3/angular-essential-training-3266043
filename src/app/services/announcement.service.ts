@@ -93,6 +93,11 @@ export class AnnouncementService {
     return this.announcements();
   }
 
+  public getAnnouncementById(id: string): Announcement | null {
+    const announcements = this.announcements();
+    return announcements.find(a => a.id === id) || null;
+  }
+
   public createOrUpdateAnnouncement(title: string, content: string, attachments: FileAttachment[] = [], creator?: Admin): Announcement {
     const now = new Date();
     const currentAdmin = creator || this.hierarchicalAdminService.getCurrentAdmin();

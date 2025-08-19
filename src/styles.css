@@ -1,22 +1,306 @@
 :root {
-  /* https://getbootstrap.com/docs/5.3/customize/css-variables/ */
-  --bs-body-bg: #53777A;
-  --bs-body-color: #ECD078;
-  --bs-body-font-family: 'Oswald', sans-serif;
-  --bs-body-font-size: 1.4rem;
-  --bs-link-color: var(--bs-body-color);
+  /* UPID Irrigation Department Color Palette */
+  --bs-primary: #2563eb;          /* Deep Blue - Water/Trust */
+  --bs-secondary: #059669;        /* Emerald Green - Agriculture/Growth */
+  --bs-success: #10b981;         /* Success Green */
+  --bs-danger: #dc2626;          /* Alert Red - UPID Brand */
+  --bs-warning: #f59e0b;         /* Warning Orange */
+  --bs-info: #0891b2;           /* Info Cyan - Water theme */
+  --bs-light: #f8fafc;          /* Light Gray */
+  --bs-dark: #1e293b;           /* Dark Slate */
+  
+  /* Custom Irrigation Theme Colors */
+  --irrigation-blue: #1e40af;    /* Primary Blue */
+  --irrigation-green: #16a34a;   /* Agriculture Green */
+  --irrigation-water: #0ea5e9;   /* Water Blue */
+  --irrigation-earth: #a16207;   /* Earth Brown */
+  --irrigation-sky: #e0f2fe;     /* Sky Light Blue */
+  
+  /* Body Styling */
+  --bs-body-bg: var(--irrigation-sky);
+  --bs-body-color: var(--bs-dark);
+  --bs-body-font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  --bs-body-font-size: 1rem;
+  --bs-link-color: var(--irrigation-blue);
+}
+
+/* Global Background with Irrigation Theme */
+body {
+  background: linear-gradient(135deg, 
+    #e0f2fe 0%,     /* Sky blue */
+    #bae6fd 25%,    /* Light water blue */
+    #7dd3fc 50%,    /* Medium water blue */
+    #38bdf8 75%,    /* Bright water blue */
+    #0ea5e9 100%    /* Deep water blue */
+  );
+  background-attachment: fixed;
+  min-height: 100vh;
+  position: relative;
+}
+
+/* Irrigation Department Background Pattern */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    /* Water droplets pattern */
+    radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(14, 165, 233, 0.08) 0%, transparent 50%),
+    /* Subtle geometric pattern for irrigation channels */
+    linear-gradient(90deg, rgba(59, 130, 246, 0.03) 1px, transparent 1px),
+    linear-gradient(rgba(59, 130, 246, 0.03) 1px, transparent 1px);
+  background-size: 
+    600px 600px,
+    800px 800px,
+    400px 400px,
+    50px 50px,
+    50px 50px;
+  background-position:
+    0 0,
+    100px 100px,
+    200px 200px,
+    0 0,
+    25px 25px;
+  animation: backgroundShift 60s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes backgroundShift {
+  0%, 100% { 
+    background-position: 0 0, 100px 100px, 200px 200px, 0 0, 25px 25px; 
+  }
+  50% { 
+    background-position: 100px 50px, 150px 150px, 250px 150px, 10px 10px, 35px 35px; 
+  }
+}
+
+/* Enhanced Card Styles */
+.card {
+  background: rgba(255, 255, 255, 0.95);
+  border: none;
+  border-radius: 16px;
+  box-shadow: 
+    0 10px 25px rgba(0, 0, 0, 0.1),
+    0 4px 6px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.15),
+    0 8px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Navigation Enhancements */
+.navbar {
+  background: rgba(30, 64, 175, 0.95) !important;
+  backdrop-filter: blur(15px);
+  border-bottom: 2px solid rgba(59, 130, 246, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
 .nav-pills {
-  --bs-nav-pills-link-active-color: var(--bs-body-bg);
-  --bs-nav-pills-link-active-bg: var(--bs-body-color);
+  --bs-nav-pills-link-active-color: white;
+  --bs-nav-pills-link-active-bg: var(--irrigation-blue);
 }
 
+/* Button Enhancements */
+.btn-primary {
+  background: linear-gradient(135deg, var(--irrigation-blue), var(--irrigation-water));
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(30, 64, 175, 0.3);
+  transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(30, 64, 175, 0.4);
+}
+
+.btn-danger {
+  background: linear-gradient(135deg, #dc2626, #ef4444);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
+}
+
+.btn-success {
+  background: linear-gradient(135deg, var(--irrigation-green), #22c55e);
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(22, 163, 74, 0.3);
+}
+
+/* Form Enhancements */
+.form-control {
+  border: 2px solid rgba(59, 130, 246, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.9);
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: var(--irrigation-blue);
+  box-shadow: 0 0 0 0.25rem rgba(59, 130, 246, 0.15);
+  background: white;
+}
+
+/* List Group Enhancements */
 .list-group {
-  --bs-list-group-bg: transparent;
+  --bs-list-group-bg: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
+  overflow: hidden;
 }
 
 .list-group-item {
-  --bs-list-group-border-color: var(--bs-body-color);
-  --bs-list-group-color: var(--bs-body-color);
+  --bs-list-group-border-color: rgba(59, 130, 246, 0.1);
+  --bs-list-group-color: var(--bs-dark);
+  background: rgba(255, 255, 255, 0.8);
+  transition: all 0.2s ease;
+}
+
+.list-group-item:hover {
+  background: rgba(59, 130, 246, 0.05);
+  transform: translateX(5px);
+}
+
+/* Alert Enhancements */
+.alert {
+  border: none;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+}
+
+.alert-success {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(34, 197, 94, 0.05));
+  border-left: 4px solid var(--irrigation-green);
+}
+
+.alert-danger {
+  background: linear-gradient(135deg, rgba(220, 38, 38, 0.1), rgba(239, 68, 68, 0.05));
+  border-left: 4px solid #dc2626;
+}
+
+.alert-info {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(56, 189, 248, 0.05));
+  border-left: 4px solid var(--irrigation-water);
+}
+
+/* Badge Enhancements */
+.badge {
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+.bg-primary {
+  background: linear-gradient(135deg, var(--irrigation-blue), var(--irrigation-water)) !important;
+}
+
+.bg-success {
+  background: linear-gradient(135deg, var(--irrigation-green), #22c55e) !important;
+}
+
+/* Modal Enhancements */
+.modal-content {
+  border: none;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(15px);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
+}
+
+/* Progress Bar Enhancements */
+.progress {
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.progress-bar {
+  border-radius: 10px;
+  background: linear-gradient(90deg, var(--irrigation-blue), var(--irrigation-water));
+}
+
+/* Irrigation Department Specific Classes */
+.irrigation-bg-primary {
+  background: linear-gradient(135deg, var(--irrigation-blue), var(--irrigation-water));
+}
+
+.irrigation-bg-secondary {
+  background: linear-gradient(135deg, var(--irrigation-green), #22c55e);
+}
+
+.irrigation-text-primary {
+  color: var(--irrigation-blue);
+}
+
+.irrigation-text-secondary {
+  color: var(--irrigation-green);
+}
+
+/* Glass morphism effect for cards */
+.glass-card {
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+}
+
+/* Water ripple effect */
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.water-ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.water-ripple::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  background: rgba(14, 165, 233, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: ripple 3s infinite;
+}
+
+/* Responsive Design Enhancements */
+@media (max-width: 768px) {
+  body::before {
+    background-size: 
+      300px 300px,
+      400px 400px,
+      200px 200px,
+      25px 25px,
+      25px 25px;
+  }
+  
+  .card {
+    border-radius: 12px;
+  }
+  
+  .btn {
+    border-radius: 10px;
+  }
 }
