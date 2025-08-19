@@ -31,6 +31,7 @@ export class AdminDashboardComponent implements OnInit {
   public selectedFiles = signal<File[]>([]);
   public uploadedAttachments = signal<FileAttachment[]>([]);
   public isUploadingFiles = signal(false);
+  public fileErrors = signal<string[]>([]);
   
   // Hierarchical admin properties
   public currentAdmin = signal<Admin | null>(null);
@@ -302,7 +303,54 @@ export class AdminDashboardComponent implements OnInit {
     const input = event.target as HTMLInputElement;
     if (input.files) {
       const newFiles = Array.from(input.files);
-      this.selectedFiles.update(files => [...files, ...newFiles]);
+      
+      // Validate files before adding
+      const validFiles: File[] = [];
+      const errors: string[] = [];
+      
+      for (const file of newFiles) {
+        // Check file size (10MB limit)
+        if (file.size > 10 * 1024 * 1024) {
+          errors.push(`${file.name}: File size exceeds 10MB limit`);
+          continue;
+        }
+        
+        // Check if file already exists
+        const existingFile = this.selectedFiles().find(f => f.name === file.name && f.size === file.size);
+        if (existingFile) {
+          errors.push(`${file.name}: File already selected`);
+          continue;
+        }
+        
+        validFiles.push(file);
+      }
+      
+      // Update errors
+      this.fileErrors.set(errors);
+      
+      // Add valid files
+      if (validFiles.length > 0) {
+        this.selectedFiles.update(files => [...files, ...validFiles]);
+        
+        // Show success message for selected files
+        if (validFiles.length === 1) {
+          this.successMessage.set(`File "${validFiles[0].name}" selected successfully!`);
+        } else {
+          this.successMessage.set(`${validFiles.length} files selected successfully!`);
+        }
+        
+        // Clear success message after 2 seconds
+        setTimeout(() => {
+          this.successMessage.set('');
+        }, 2000);
+      }
+      
+      // Clear errors after 5 seconds if any
+      if (errors.length > 0) {
+        setTimeout(() => {
+          this.fileErrors.set([]);
+        }, 5000);
+      }
       
       // Clear the input so the same file can be selected again
       input.value = '';

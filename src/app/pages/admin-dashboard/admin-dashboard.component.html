@@ -125,7 +125,7 @@
                 <label class="form-label">File Attachments</label>
                 
                 <!-- File Input -->
-                <div class="mb-3">
+                <div class="mb-3 file-upload-area">
                   <input
                     type="file"
                     class="form-control"
@@ -138,15 +138,39 @@
                     <i class="bi bi-info-circle me-1"></i>
                     Supported: PDF, Word, Excel, PowerPoint, Images, Text, Archives (Max 10MB each)
                   </div>
+                  
+                  <!-- Quick File Selection Status -->
+                  <div *ngIf="selectedFiles().length > 0" class="mt-2 file-selected-indicator">
+                    <div class="badge bg-success ready-to-upload-badge">
+                      <i class="bi bi-check-circle me-1"></i>
+                      {{ selectedFiles().length }} file(s) ready to upload
+                    </div>
+                  </div>
+                  
+                  <!-- File Validation Errors -->
+                  <div *ngIf="fileErrors().length > 0" class="mt-2">
+                    <div class="alert alert-warning py-2 mb-0" role="alert">
+                      <small>
+                        <i class="bi bi-exclamation-triangle me-1"></i>
+                        <strong>File Upload Issues:</strong>
+                      </small>
+                      <ul class="mb-0 mt-1 small">
+                        <li *ngFor="let error of fileErrors()">{{ error }}</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
 
                 <!-- Selected Files Preview -->
                 <div *ngIf="selectedFiles().length > 0" class="mb-3">
-                  <h6 class="text-muted">Selected Files:</h6>
-                  <div class="list-group list-group-flush">
+                  <div class="d-flex align-items-center mb-2">
+                    <h6 class="text-muted mb-0 me-2">Selected Files:</h6>
+                    <small class="badge bg-primary">{{ selectedFiles().length }} files</small>
+                  </div>
+                  <div class="list-group list-group-flush border rounded">
                     <div 
                       *ngFor="let file of selectedFiles(); let i = index" 
-                      class="list-group-item d-flex justify-content-between align-items-center px-0"
+                      class="list-group-item d-flex justify-content-between align-items-center bg-light file-preview-item"
                     >
                       <div class="d-flex align-items-center">
                         <i class="bi me-2 text-primary" [class]="getFileIcon(file.type)"></i>
@@ -154,15 +178,21 @@
                           <div class="fw-semibold">{{ file.name }}</div>
                           <small class="text-muted">{{ formatFileSize(file.size) }}</small>
                         </div>
+                        <span class="badge bg-warning ms-2">Ready to upload</span>
                       </div>
                       <button 
                         type="button" 
                         class="btn btn-outline-danger btn-sm"
                         (click)="removeSelectedFile(i)"
+                        title="Remove file"
                       >
                         <i class="bi bi-x"></i>
                       </button>
                     </div>
+                  </div>
+                  <div class="mt-2 text-muted small">
+                    <i class="bi bi-info-circle me-1"></i>
+                    Files will be uploaded when you submit the announcement.
                   </div>
                 </div>
 
@@ -210,6 +240,9 @@
                   <span *ngIf="!isUploadingFiles() && isSubmitting()">Saving...</span>
                   <span *ngIf="!isSubmitting() && !isUploadingFiles()">
                     {{ isEditMode() ? 'Update Announcement' : 'Create New Announcement' }}
+                    <span *ngIf="selectedFiles().length > 0" class="badge bg-light text-dark ms-2">
+                      {{ selectedFiles().length }} file(s)
+                    </span>
                   </span>
                 </button>
                 
