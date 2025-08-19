@@ -51,8 +51,8 @@ export class AnnouncementService {
       const systemAdmin = this.hierarchicalAdminService.getAdminById('admin-legacy');
       const defaultAnnouncement: Announcement = {
         id: '1',
-        title: 'Welcome to Irrigation Department Announcement Portal!',
-        content: 'This portal enables hierarchical communication across all levels of the UP Irrigation Department. Officers can share important updates, documents, and circulars with appropriate access controls based on seniority.',
+        title: 'स्वागत है UPID सूचना पोर्टल में! | Welcome to UPID Suchana Portal!',
+        content: 'यह पोर्टल उत्तर प्रदेश सिंचाई विभाग के सभी स्तरों पर पदानुक्रमित संचार को सक्षम बनाता है। अधिकारी वरिष्ठता के आधार पर उपयुक्त पहुंच नियंत्रण के साथ महत्वपूर्ण अपडेट, दस्तावेज़ और परिपत्र साझा कर सकते हैं। | This portal enables hierarchical communication across all levels of the UP Irrigation Department. Officers can share important updates, documents, and circulars with appropriate access controls based on seniority.',
         createdAt: new Date(),
         updatedAt: new Date(),
         likes: 0,
