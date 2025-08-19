@@ -57,6 +57,13 @@ export class AnnouncementComponent implements OnInit {
     
     // Mark user as viewed
     this.userService.markAsViewed(user.id);
+
+    // Set up callback to sync download counts
+    this.fileService.setDownloadCallback((fileId: string) => {
+      this.announcementService.updateFileDownloadCount(fileId);
+      // Refresh the announcement to show updated download counts
+      this.announcement.set(this.announcementService.getLatestAnnouncement());
+    });
   }
 
   public toggleLike(): void {

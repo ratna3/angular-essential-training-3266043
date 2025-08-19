@@ -14,6 +14,9 @@ export class FileService {
   public files$ = this.files.asReadonly();
   public analytics$ = this.analytics.asReadonly();
 
+  // Callback for notifying announcement service of downloads
+  private onDownloadCallback?: (fileId: string) => void;
+
   private loadFiles(): FileAttachment[] {
     const stored = localStorage.getItem(this.FILE_STORAGE_KEY);
     return stored ? JSON.parse(stored) : [];
@@ -193,8 +196,17 @@ export class FileService {
     this.saveFiles();
     this.saveAnalytics();
 
+    // Notify announcement service of the download
+    if (this.onDownloadCallback) {
+      this.onDownloadCallback(fileId);
+    }
+
     // Trigger file download
     this.triggerFileDownload(file);
+  }
+
+  public setDownloadCallback(callback: (fileId: string) => void): void {
+    this.onDownloadCallback = callback;
   }
 
   private triggerFileDownload(file: FileAttachment): void {

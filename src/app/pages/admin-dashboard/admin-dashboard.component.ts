@@ -61,6 +61,13 @@ export class AdminDashboardComponent implements OnInit {
 
     this.loadCurrentAnnouncement();
     
+    // Set up callback to sync download counts
+    this.fileService.setDownloadCallback((fileId: string) => {
+      this.announcementService.updateFileDownloadCount(fileId);
+      // Refresh the current announcement to show updated download counts
+      this.loadCurrentAnnouncement();
+    });
+    
     // Refresh data periodically to show updated download counts
     setInterval(() => {
       this.loadCurrentAnnouncement();
@@ -232,6 +239,9 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   public getTotalDownloads(): number {
+    // First sync file downloads to ensure we have latest data
+    this.announcementService.syncFileDownloads(this.fileService);
+    
     // Get all files from all announcements and sum their downloads
     const allAnnouncements = this.announcementService.getAllAnnouncements();
     let totalDownloads = 0;
@@ -248,6 +258,9 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   public getTopDownloadedFiles(): FileAttachment[] {
+    // First sync file downloads to ensure we have latest data
+    this.announcementService.syncFileDownloads(this.fileService);
+    
     // Get all files from all announcements and sort by downloads
     const allFiles: FileAttachment[] = [];
     const allAnnouncements = this.announcementService.getAllAnnouncements();

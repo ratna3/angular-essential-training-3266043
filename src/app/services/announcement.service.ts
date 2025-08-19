@@ -258,6 +258,35 @@ export class AnnouncementService {
     return this.announcements().length > 0;
   }
 
+  public syncFileDownloads(fileService: any): void {
+    // Sync download counts from file service to announcements
+    this.announcements.update(announcements => 
+      announcements.map(announcement => ({
+        ...announcement,
+        attachments: announcement.attachments.map(attachment => {
+          const fileData = fileService.getFile(attachment.id);
+          return fileData ? { ...attachment, downloads: fileData.downloads } : attachment;
+        })
+      }))
+    );
+    this.saveAnnouncements();
+  }
+
+  public updateFileDownloadCount(fileId: string): void {
+    // Update download count for specific file in all announcements
+    this.announcements.update(announcements => 
+      announcements.map(announcement => ({
+        ...announcement,
+        attachments: announcement.attachments.map(attachment => 
+          attachment.id === fileId 
+            ? { ...attachment, downloads: attachment.downloads + 1 }
+            : attachment
+        )
+      }))
+    );
+    this.saveAnnouncements();
+  }
+
   public clearAllData(): void {
     this.announcements.set([]);
     localStorage.removeItem(this.STORAGE_KEY);
